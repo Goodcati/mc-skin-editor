@@ -5,7 +5,7 @@ export const SKIN_SIZE = 64
  * 界面显示的版本号（主版本.迭代.补丁）。
  * 大厅和绘制页顶栏都读这一处，免得两边各写一份、改一处漏一处。
  */
-export const APP_VERSION = 'V0.9.0'
+export const APP_VERSION = 'V1.0.0'
 
 /** 铅笔初始颜色 */
 export const DEFAULT_COLOR = '#3B82F6'
@@ -36,4 +36,4 @@ export const CHECKER_DARK = '#272c37'
  * **留空字符串 = 不显示任何打赏入口**。要开打赏，只改这一个地方，
  * 不要在组件里另写一份 URL。
  */
-export const SUPPORT_URL = ''
+export const SUPPORT_URL = 'https://afdian.com/u/5597e05c912c11ee8ce952540025c377'

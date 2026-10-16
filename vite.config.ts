@@ -4,6 +4,10 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // GitHub Pages 的**项目型**站点发布在子路径 https://<用户名>.github.io/<仓库名>/，
+  // 资源默认按根路径 /assets/... 引用会 404 → 白屏，所以必须显式给 base。
+  // 若将来改用**自定义域名**或 <用户名>.github.io 主页站点（发布在根路径），把这里改回 '/'。
+  base: '/mc-skin-editor/',
   plugins: [react(), tailwindcss()],
   server: {
     // 显式绑 IPv4 回环：Node 在 Windows 下把 'localhost' 解析成 ::1，

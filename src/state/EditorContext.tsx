@@ -32,6 +32,16 @@ const AUTOSAVE_DELAY = 1200
 const RECENT_COLORS_KEY = 'mc-skin-editor/recent-colors/v1'
 
 /**
+ * 内置示例皮肤的 URL。
+ *
+ * **必须走 `import.meta.env.BASE_URL`**：GitHub Pages 的「项目型」站点把应用挂在
+ * `/mc-skin-editor/` 子路径下，而 Vite 的 `base` **不会**重写运行时拼出的字符串
+ * （只重写 index.html / CSS 里的引用）——写死 `/skins/sample-wide.png` 在线上会 404。
+ * 实测：子路径下 `/skins/...` → 404，`/mc-skin-editor/skins/...` → 200。
+ */
+const BUILTIN_SKIN_URL = `${import.meta.env.BASE_URL}skins/sample-wide.png`
+
+/**
  * 从本地存储读「最近使用颜色」。
  *
  * 沿用 autosave/works 的约定：版本化键名 + 防御式解析。坏数据（不是数组 /
@@ -528,14 +538,14 @@ export function EditorProvider({ children }: { children: ReactNode }) {
           // 同时退回内置示例皮肤，绝不把用户卡在空白画布上
           clearSnapshot()
           setLastSavedAt(null)
-          loadSkinFromUrl('/skins/sample-wide.png', '示例·宽型').catch(() => {
+          loadSkinFromUrl(BUILTIN_SKIN_URL, '示例·宽型').catch(() => {
             flash('内置示例皮肤加载失败，可手动导入')
           })
         })
       return
     }
 
-    loadSkinFromUrl('/skins/sample-wide.png', '示例·宽型').catch(() => {
+    loadSkinFromUrl(BUILTIN_SKIN_URL, '示例·宽型').catch(() => {
       flash('内置示例皮肤加载失败，可手动导入')
     })
   }, [loadSkinFromUrl, flash])

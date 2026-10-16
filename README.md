@@ -48,10 +48,9 @@ npm run verify
 
 ## 支持
 
-如果你觉得有用，可以请我喝杯茶。
+如果你觉得有用，可以请我喝杯茶 —— **爱发电**：<https://afdian.com/u/5597e05c912c11ee8ce952540025c377>
 
-> 打赏链接（爱发电）唯一维护在 `src/constants.ts` 的 `SUPPORT_URL`；当前留空，
-> 因此 README 不展示链接，界面上也不显示任何打赏入口。填入后两端同时生效。
+> 打赏链接唯一维护在 `src/constants.ts` 的 `SUPPORT_URL`，不要另写一份。
 
 ## 许可
 
