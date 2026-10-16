@@ -1,0 +1,38 @@
+{
+  "name": "mc-skin-editor",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "gen:samples": "tsx scripts/make-sample-skins.mts",
+    "verify": "npm run verify:export && npm run verify:head && npm run verify:works",
+    "verify:export": "tsx scripts/verify-export.mts",
+    "verify:head": "tsx scripts/verify-head.mts",
+    "verify:works": "tsx scripts/verify-works.mts"
+  },
+  "dependencies": {
+    "lucide-react": "^1.53.0",
+    "pngjs": "^7.0.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "skinview3d": "^3.4.2",
+    "three": "^0.156.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}
