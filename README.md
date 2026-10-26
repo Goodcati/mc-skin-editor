@@ -55,3 +55,11 @@ npm run verify
 ## 许可
 
 [MIT](LICENSE) © 2026 Goodcati
+
+## 离线版（不需要联网）
+
+大厅底部「我的皮肤」一行右侧有 **下载离线版** 按钮；也可以直接下载：
+https://goodcati.github.io/mc-skin-editor/download/mse-offline.zip
+
+解压后双击 index.html 即可使用（纯前端，数据只存在你自己的浏览器里）。
+离线包与网页版是同一份代码，只是资源改为相对路径、入口改为经典脚本，以便从本地文件直接打开。
