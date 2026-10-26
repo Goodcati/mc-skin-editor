@@ -193,15 +193,17 @@ export default function Lobby() {
               路径必须走 BASE_URL —— Vite 的 base 不重写运行时字符串，
               写死 /download/... 在子路径部署下会 404。
             */}
-            <a
-              href={`${import.meta.env.BASE_URL}download/mse-offline.zip`}
-              download
-              title="下载离线版：解压后双击 index.html，不联网也能用"
-              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
-            >
-              <Download size={11} strokeWidth={2} />
-              下载离线版
-            </a>
+            {import.meta.env.MODE !== 'offline' && (
+              <a
+                href={`${import.meta.env.BASE_URL}download/mse-offline.zip`}
+                download
+                title="下载离线版：解压后双击 index.html，不联网也能用"
+                className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
+              >
+                <Download size={11} strokeWidth={2} />
+                下载离线版
+              </a>
+            )}
             <input
               ref={backupInputRef}
               type="file"
