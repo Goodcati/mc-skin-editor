@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Box, Brush, Combine, Download, MoveRight, Paintbrush, Trash2, Upload } from 'lucide-react'
+import { Box, Brush, Combine, Download, History, MoveRight, Trash2, Upload, TriangleAlert, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { APP_VERSION } from '../constants'
@@ -20,20 +20,62 @@ import { useMerge } from '../state/MergeContext'
 import { STARTER_OPTIONS, readStarter, writeStarter, type StarterBase } from '../lib/starterSkin'
 
 /**
+ * 「作品只存在这台电脑」提示的关闭记录。
+ *
+ * key 里带版本号是故意的：将来要再提醒一次（比如加了云同步、或者搬家流程变了），
+ * 把 v1 改成 v2，所有人都会重新看到一次，不用写迁移代码。
+ */
+const NOTICE_KEY = 'mc-skin-editor/notice/v1'
+
+function readNoticeDismissed(): boolean {
+  try {
+    return window.localStorage.getItem(NOTICE_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function writeNoticeDismissed(): void {
+  try {
+    window.localStorage.setItem(NOTICE_KEY, '1')
+  } catch {
+    // 隐私模式下写不进去：那就每次进来都提醒，也不算坏
+  }
+}
+
+/** 三个起点的说明。文案里有「游戏内会显示成黑色」这句，别删 —— 那是真实表现 */
+const STARTER_DESC: Record<StarterBase, string> = {
+  sample: '内置示例皮肤，适合改造',
+  white: '全白皮肤，从零画最清楚',
+  empty: '未填充画布；游戏内会显示成黑色',
+}
+
+/**
+ * 路由跳转。
+ *
+ * 放在模块级而不是组件里，是因为 oxlint 的 React 编译器规则会把组件内的
+ * `window.location.hash = ...` 判成「修改外部可变值」（react/immutability）。
+ * 这里只碰 location、不碰任何组件状态，本来就不是渲染逻辑。
+ */
+function goTo(hash: '#/draw' | '#/merge'): void {
+  window.location.hash = hash
+}
+
+/**
  * 大厅：工具的入口页。
  *
- * 「大厅 = 新建」：点「绘制 / 合成」进入的是空作业。绘制侧有持久化草稿（本地快照），
- * 存在草稿时先弹一次二选一（继续上次 / 新建并清空），之后不再问；
- * 合成侧没有持久化草稿，直接新建。
+ * 「大厅 = 新建」：点「绘制」一定会弹「新建皮肤」让你选起点（有草稿时多一条
+ * 「继续编辑」），选完直接进绘制页，不再二次确认。
+ * 合成侧没有持久化草稿，点卡片直接新建。
  *
  * 「我的皮肤」= 继续入口：列出导出过的作品，点一件回到它最后的进度。
  */
 export default function Lobby() {
-  const { startNewSkin, loadWork, flash } = useEditor()
+  const { startNewSkin, loadWork, importSkinFile, flash } = useEditor()
   const { startNewMerge, loadMergeWork } = useMerge()
 
-  // 点卡片时的「二选一」状态：null = 没在问；否则存「要进哪个板块」
-  const [pendingNew, setPendingNew] = useState<'draw' | 'merge' | null>(null)
+  // 「新建皮肤」弹窗。draft 在打开那一刻算一次，之后不再重复读 localStorage
+  const [newSkin, setNewSkin] = useState<{ draft: boolean } | null>(null)
 
   // 待删除的作品（二次确认）。null = 没在确认删除
   const [pendingDelete, setPendingDelete] = useState<WorkItem | null>(null)
@@ -41,8 +83,11 @@ export default function Lobby() {
   // 作品列表用 state 持有：删除后要立刻刷新，不能每次渲染都同步读 localStorage
   const [works, setWorks] = useState<WorkItem[]>(() => readWorks().works)
 
-  // 新皮肤起点偏好：只影响「首次打开」与「新建」，不改变当前这张
+  // 上次选的起点，用来给弹窗里的选项做默认高亮
   const [starter, setStarter] = useState<StarterBase>(() => readStarter())
+
+  // 数据提醒条：关掉之后（同一 key 版本内）不再出现
+  const [noticeOpen, setNoticeOpen] = useState(() => !readNoticeDismissed())
 
   // 导入备份用的隐藏文件选择器
   const backupInputRef = useRef<HTMLInputElement>(null)
@@ -87,21 +132,34 @@ export default function Lobby() {
 
   const enterDraw = (fresh: boolean) => {
     if (fresh) startNewSkin()
-    window.location.hash = '#/draw'
+    goTo('#/draw')
   }
 
   const enterMerge = () => {
     startNewMerge()
-    window.location.hash = '#/merge'
+    goTo('#/merge')
   }
 
-  // 点「绘制」卡：有草稿就问一次，没有直接新建
+  // 点「绘制」卡：一律弹窗。有没有草稿在打开这一刻算
   const handleDrawCard = () => {
-    if (readSnapshot() !== null) {
-      setPendingNew('draw')
-    } else {
-      enterDraw(true)
-    }
+    setNewSkin({ draft: readSnapshot() !== null })
+  }
+
+  // 选了某个起点：记住它、按它新建、直接进绘制页（不再二次确认）
+  const pickStarter = (base: StarterBase) => {
+    writeStarter(base)
+    setStarter(base)
+    setNewSkin(null)
+    startNewSkin(base)
+    goTo('#/draw')
+  }
+
+  // 选了「导入」：先清成未填充，再走已有导入路径（它会立刻落盘），然后进绘制页
+  const pickImport = async (file: File) => {
+    setNewSkin(null)
+    startNewSkin('empty')
+    await importSkinFile(file)
+    goTo('#/draw')
   }
 
   // 点「合成」卡：没有持久化草稿，直接新建
@@ -112,14 +170,14 @@ export default function Lobby() {
   const openDrawWork = (work: WorkItem) => {
     // 恢复完成后跳转；loadWork 是异步的，跳早了画布还没回来
     void loadWork(work).then(() => {
-      window.location.hash = '#/draw'
+      goTo('#/draw')
     })
   }
 
   const openMergeWork = (work: WorkItem) => {
     // 与 openDrawWork 同款：异步恢复完再跳，不在 async 函数里直接赋值 location.hash
     void loadMergeWork(work).then(() => {
-      window.location.hash = '#/merge'
+      goTo('#/merge')
     })
   }
 
@@ -133,9 +191,12 @@ export default function Lobby() {
     flash(`已删除「${work.name}」`)
   }
 
+  const toolBtn =
+    'flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-1 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300'
+
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-surface-app text-fg-2">
-      {/* 顶栏：左品牌。品牌块与绘制页顶栏保持一致，切页时不会跳位 */}
+      {/* 顶栏：品牌在左，三个数据工具在右。品牌块与绘制页顶栏保持一致，切页时不会跳位 */}
       <header className="flex h-11 shrink-0 items-center border-b border-wash-10 bg-surface-chrome px-3">
         <div className="flex items-center gap-2">
           <span className="grid h-6 w-6 place-items-center rounded bg-accent-400/15 text-accent-300">
@@ -149,99 +210,90 @@ export default function Lobby() {
             {APP_VERSION}
           </span>
         </div>
-        {/* 新皮肤起点：只影响「首次打开」与「新建」，不改变当前这张 */}
-        <div className="ml-auto flex items-center gap-1">
-          <span className="text-10 text-fg-6">新皮肤</span>
-          <div className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 p-1">
-            {STARTER_OPTIONS.map((option) => (
-              <button
-                key={option.base}
-                type="button"
-                title={option.title}
-                onClick={() => {
-                  writeStarter(option.base)
-                  setStarter(option.base)
-                  flash(`新皮肤起点：${option.label}`)
-                }}
-                className={'rounded px-1.5 py-1 text-10 transition-colors ' + (starter === option.base ? 'bg-accent-400/15 text-accent-300' : 'text-fg-5 hover:text-fg-2')}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+
+        <div className="ml-auto flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={exportBackup}
+            title="把作品库整体导出成一个 JSON 文件。清理浏览器数据、换电脑、或从网页版迁到离线版时，这是唯一的迁移方式。"
+            className={toolBtn}
+          >
+            <Download size={11} strokeWidth={2} />
+            导出备份
+          </button>
+          <button
+            type="button"
+            onClick={() => backupInputRef.current?.click()}
+            title="从 JSON 备份恢复作品，只新增不覆盖，可反复导入同一个文件。"
+            className={toolBtn}
+          >
+            <Upload size={11} strokeWidth={2} />
+            导入备份
+          </button>
+          {/*
+            离线版下载：静态文件，直接指 public/download/ 下的 zip。
+            路径必须走 BASE_URL —— Vite 的 base 不重写运行时字符串，
+            写死 /download/... 在子路径部署下会 404。
+            离线包本身（MODE=offline）里不能出现这个入口：包里没有这个 zip，点了就是死链。
+          */}
+          {import.meta.env.MODE !== 'offline' && (
+            <a
+              href={`${import.meta.env.BASE_URL}download/mse-offline.zip`}
+              download
+              title="下载可离线使用的整包（解压后双击 index.html）。离线版和网页版的作品库互不相通，用导出备份迁移。"
+              className={toolBtn}
+            >
+              <Download size={11} strokeWidth={2} />
+              下载离线版
+            </a>
+          )}
+          <input
+            ref={backupInputRef}
+            type="file"
+            accept=".json,application/json"
+            className="hidden"
+            onChange={(event) => {
+              const file = event.target.files?.[0]
+              // 清空 value，允许连续选同一个文件（否则第二次选它不触发 change）
+              event.target.value = ''
+              if (file) void importBackup(file)
+            }}
+          />
         </div>
       </header>
 
-      {/* 主体：两块等宽大卡片。点击 = 新建 */}
-      <main className="flex min-h-0 flex-1 gap-3 p-3">
-        <LobbyCard
-          icon={Combine}
-          title="合成"
-          desc="上传两张皮肤，按部件拼成一张"
-          onClick={handleMergeCard}
-          extra={<MergeSketch />}
-        />
-        <LobbyCard
-          icon={Brush}
-          title="绘制"
-          desc="逐像素画一张 64×64 皮肤"
-          onClick={handleDrawCard}
-          extra={<CurrentSkin />}
-        />
+      {/* 主体：数据提醒条 + 两块等宽大卡片。点卡片 = 新建 */}
+      <main className="flex min-h-0 flex-1 flex-col gap-3 p-3">
+        {noticeOpen && (
+          <StorageNotice
+            onClose={() => {
+              writeNoticeDismissed()
+              setNoticeOpen(false)
+            }}
+          />
+        )}
+        <div className="flex min-h-0 flex-1 gap-3">
+          <LobbyCard
+            icon={Combine}
+            title="合成"
+            desc="上传两张皮肤，按部件拼成一张"
+            onClick={handleMergeCard}
+            extra={<MergeSketch />}
+          />
+          <LobbyCard
+            icon={Brush}
+            title="绘制"
+            desc="逐像素画一张 64×64 皮肤"
+            onClick={handleDrawCard}
+            extra={<CurrentSkin />}
+          />
+        </div>
       </main>
 
       {/* 底部通栏：作品库（「我的皮肤」）。空态 + 真实列表 */}
       <footer className="flex h-[104px] shrink-0 flex-col border-t border-wash-10 bg-surface-chrome px-3 py-2">
-        <div className="flex shrink-0 items-center justify-between">
+        <div className="flex shrink-0 items-center">
           <span className="text-11 font-medium tracking-wide text-fg-4">我的皮肤</span>
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={exportBackup}
-              title="把作品库导出成 JSON 文件，可备份、可换机器恢复"
-              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-1 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
-            >
-              <Download size={11} strokeWidth={2} />
-              导出备份
-            </button>
-            <button
-              type="button"
-              onClick={() => backupInputRef.current?.click()}
-              title="从 JSON 备份文件恢复作品（只新增，不覆盖现有作品）"
-              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-1 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
-            >
-              <Upload size={11} strokeWidth={2} />
-              导入备份
-            </button>
-            {/*
-              离线版下载：静态文件，直接指 public/download/ 下的 zip。
-              路径必须走 BASE_URL —— Vite 的 base 不重写运行时字符串，
-              写死 /download/... 在子路径部署下会 404。
-            */}
-            {import.meta.env.MODE !== 'offline' && (
-              <a
-                href={`${import.meta.env.BASE_URL}download/mse-offline.zip`}
-                download
-                title="下载离线版：解压后双击 index.html，不联网也能用"
-                className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-1 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
-              >
-                <Download size={11} strokeWidth={2} />
-                下载离线版
-              </a>
-            )}
-            <input
-              ref={backupInputRef}
-              type="file"
-              accept=".json,application/json"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0]
-                // 清空 value，允许连续选同一个文件（否则第二次选它不触发 change）
-                event.target.value = ''
-                if (file) void importBackup(file)
-              }}
-            />
-          </div>
         </div>
         {works.length === 0 ? (
           <span className="mt-1.5 truncate text-11 text-fg-6">
@@ -292,18 +344,18 @@ export default function Lobby() {
         )}
       </footer>
 
-      {/* 二选一：有草稿时，进绘制前问一次 */}
-      {pendingNew === 'draw' && (
-        <ConfirmNewDialog
+      {/* 新建皮肤：点「绘制」一律先过这一步 */}
+      {newSkin && (
+        <NewSkinDialog
+          draft={newSkin.draft}
+          starter={starter}
           onContinue={() => {
-            setPendingNew(null)
+            setNewSkin(null)
             enterDraw(false)
           }}
-          onNew={() => {
-            setPendingNew(null)
-            enterDraw(true)
-          }}
-          onCancel={() => setPendingNew(null)}
+          onPick={pickStarter}
+          onImport={(file) => void pickImport(file)}
+          onCancel={() => setNewSkin(null)}
         />
       )}
 
@@ -318,6 +370,155 @@ export default function Lobby() {
           onCancel={() => setPendingDelete(null)}
         />
       )}
+    </div>
+  )
+}
+
+/**
+ * 数据只存在本地这件事，新用户第一次进来必须看到。
+ *
+ * 不遮挡卡片点击区：它是 main 里的普通一行，卡片行在它下面独立撑开，
+ * 没有用 fixed / absolute 去盖任何东西。
+ */
+function StorageNotice({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="flex shrink-0 items-start gap-2 rounded-lg border border-warn-400/25 bg-warn-400/10 px-3 py-2">
+      <TriangleAlert size={14} strokeWidth={2} className="mt-1 shrink-0 text-warn-300" />
+      <p className="min-w-0 flex-1 text-11 leading-relaxed text-fg-3">
+        作品保存在这台电脑的浏览器里（不上传、不同步）。清理浏览器数据或换设备会丢失 ——
+        建议用右上角「导出备份」留一份 JSON。
+      </p>
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="关闭这条提示"
+        title="关掉后不再显示（同一版本内）"
+        className="-mr-1 shrink-0 rounded p-1 text-fg-5 transition-colors hover:text-fg-2"
+      >
+        <X size={13} strokeWidth={2} />
+      </button>
+    </div>
+  )
+}
+
+/**
+ * 新建皮肤：先选起点，选完直接进绘制页。
+ *
+ * 有草稿时多一条「继续编辑」—— 那条不是起点，它只是回到上次那张，
+ * 所以放在起点列表**上方**并单独描边，避免和「示例/纯白/未填充」混成一排选项。
+ */
+function NewSkinDialog({
+  draft,
+  starter,
+  onContinue,
+  onPick,
+  onImport,
+  onCancel,
+}: {
+  draft: boolean
+  starter: StarterBase
+  onContinue: () => void
+  onPick: (base: StarterBase) => void
+  onImport: (file: File) => void
+  onCancel: () => void
+}) {
+  const importInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onCancel()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onCancel])
+
+  const rowBase = 'flex w-full items-start gap-2 rounded-md border px-2 py-1.5 text-left transition-colors'
+  const rowIdle = `${rowBase} border-wash-8 bg-wash-3 hover:border-accent-400/40`
+  const rowActive = `${rowBase} border-accent-400/55 bg-accent-400/12`
+  // 间距只用 1 / 1.5 / 2 / 3 四档（4/6/8/12px），见 docs/DEV-NOTES.md
+  const chipBase = 'mt-1 w-14 shrink-0 rounded border px-1 py-1 text-center text-10'
+  const chipIdle = `${chipBase} border-wash-9 text-fg-4`
+  const chipActive = `${chipBase} border-accent-400/40 bg-accent-400/15 text-accent-300`
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-3"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onCancel()
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="新建皮肤"
+        className="w-[420px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-3 shadow-2xl"
+      >
+        <h2 className="text-13 font-semibold text-fg-1">新建皮肤</h2>
+
+        {draft && (
+          <button
+            type="button"
+            onClick={onContinue}
+            className="mt-2 flex w-full items-center gap-2 rounded-md border border-accent-400/30 bg-accent-400/10 px-2 py-1.5 text-left text-11 text-accent-300 transition-colors hover:border-accent-400/55"
+          >
+            <History size={12} strokeWidth={2} />
+            继续编辑 · 当前草稿
+          </button>
+        )}
+
+        <p className="mt-3 text-11 text-fg-5">从哪种起点开始？</p>
+
+        <div className="mt-2 flex flex-col gap-1.5">
+          {STARTER_OPTIONS.map((option) => {
+            const active = option.base === starter
+            return (
+              <button
+                key={option.base}
+                type="button"
+                onClick={() => onPick(option.base)}
+                className={active ? rowActive : rowIdle}
+              >
+                <span className={active ? chipActive : chipIdle}>{option.label}</span>
+                <span className="min-w-0 flex-1 text-11 leading-relaxed text-fg-3">
+                  {STARTER_DESC[option.base]}
+                </span>
+              </button>
+            )
+          })}
+
+          {/* 导入不是「起点偏好」，所以不参与高亮、也不写入 starter */}
+          <button type="button" onClick={() => importInputRef.current?.click()} className={rowIdle}>
+            <span className={chipIdle}>导入</span>
+            <span className="min-w-0 flex-1 text-11 leading-relaxed text-fg-3">
+              选一张本地 64×64 皮肤
+            </span>
+          </button>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between">
+          <span className="text-10 text-fg-6">选好直接进绘制页</span>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-md border border-wash-9 bg-wash-4 px-2 py-1.5 text-11 text-fg-3 transition-colors hover:border-wash-20"
+          >
+            取消
+          </button>
+        </div>
+
+        <input
+          ref={importInputRef}
+          type="file"
+          accept="image/png"
+          aria-label="选择要导入的皮肤文件"
+          className="hidden"
+          onChange={(event) => {
+            const file = event.target.files?.[0]
+            event.target.value = ''
+            if (file) onImport(file)
+          }}
+        />
+      </div>
     </div>
   )
 }
@@ -371,71 +572,6 @@ function WorkHeadThumb({ work }: { work: WorkItem }) {
         style={{ imageRendering: src === work.dataUrl ? 'pixelated' : 'auto' }}
       />
     </span>
-  )
-}
-
-/** 有草稿时点「绘制」弹的二选一：继续上次 / 新建并清空。只问一次 */
-function ConfirmNewDialog({
-  onContinue,
-  onNew,
-  onCancel,
-}: {
-  onContinue: () => void
-  onNew: () => void
-  onCancel: () => void
-}) {
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onCancel()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onCancel])
-
-  return (
-    <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-3"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onCancel()
-      }}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="继续还是新建"
-        className="w-[360px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-3 shadow-2xl"
-      >
-        <header className="flex items-start gap-2">
-          <span className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-warn-400/15 text-warn-300">
-            <Paintbrush size={15} strokeWidth={2} />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h2 className="text-13 font-semibold text-fg-1">有未完成的绘制</h2>
-            <p className="mt-1 text-11 leading-relaxed text-fg-5">
-              上次的皮肤还没导出。可以接着画，也可以另起一张新的。
-            </p>
-          </div>
-        </header>
-
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={onContinue}
-            className="flex items-center justify-center rounded-md border border-accent-400/30 bg-accent-400/10 px-2 py-1.5 text-11 text-accent-300 transition-colors hover:border-accent-400/55"
-          >
-            继续上次
-          </button>
-          <button
-            type="button"
-            onClick={onNew}
-            title="清空当前画布，另起一张新的"
-            className="flex items-center justify-center rounded-md border border-wash-9 bg-wash-4 px-2 py-1.5 text-11 text-fg-3 transition-colors hover:border-wash-20"
-          >
-            新建并清空
-          </button>
-        </div>
-      </div>
-    </div>
   )
 }
 
