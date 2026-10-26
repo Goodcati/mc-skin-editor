@@ -153,6 +153,22 @@ export default function SkinViewport({
     viewer.controls.enablePan = false
     viewerRef.current = viewer
 
+    // 未填充像素（alpha = 0）要像游戏里那样「看得穿」，而不是被画成黑色：
+    // 关混合 + alphaTest 直接丢弃透明像素。我们的导出不变量保证 alpha 只有 0/255，
+    // 所以 0.5 这条阈值等价于「非透明才画」。
+    // 材质在 SkinObject 里是私有的，遍历子网格统一设置，不碰内部字段
+    viewer.playerObject.skin.traverse((object) => {
+      const holder = object as unknown as {
+        material?: { transparent: boolean; alphaTest: number; needsUpdate: boolean } | Array<{ transparent: boolean; alphaTest: number; needsUpdate: boolean }>
+      }
+      const list = Array.isArray(holder.material) ? holder.material : holder.material ? [holder.material] : []
+      for (const material of list) {
+        material.transparent = false
+        material.alphaTest = 0.5
+        material.needsUpdate = true
+      }
+    })
+
     const skinCanvas = viewer.skinCanvas
     let frame = 0
 
@@ -191,6 +207,12 @@ export default function SkinViewport({
     // 拾取白名单都是按旧几何体装配的。重建会让 onViewerChange 再走一遍，
     // 全部重新装配，不会漏。代价是视角复位 —— 换体型本来就是个"重新认识这张皮"的动作。
   }, [doc, ready, animated, effectiveModel, external, sourceCanvas, interactive])
+
+  // 兜底：撤销 / 重做 / 导入 / 恢复快照 都可能绕过 doc 订阅，任何一次重渲染后都再同步一次。
+  // 代价是 64×64 的 drawImage + 一次 needsUpdate，可忽略。
+  useEffect(() => {
+    syncRef.current()
+  })
 
   // 外部源内容变了：只重新同步一次纹理，不重建 viewer（重建会丢掉用户的旋转角度）
   useEffect(() => {

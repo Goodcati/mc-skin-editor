@@ -16,7 +16,7 @@ const STARTER_KEY = 'mc-skin-editor/starter/v1'
 export const STARTER_OPTIONS: ReadonlyArray<{ base: StarterBase; label: string; title: string }> = [
   { base: 'sample', label: '示例', title: '打开就是内置示例皮肤（经典布局，适合改造）' },
   { base: 'white', label: '纯白', title: '打开就是全白皮肤，从零画最清楚' },
-  { base: 'empty', label: '空画布', title: '打开就是全透明画布，适合边看参考边画' },
+  { base: 'empty', label: '未填充', title: '打开就是未填充画布，3D 里和游戏一致（看得穿）' },
 ]
 
 export function readStarter(): StarterBase {
@@ -26,7 +26,7 @@ export function readStarter(): StarterBase {
   } catch {
     // 隐私模式 / 存储被禁：按默认处理
   }
-  return 'sample'
+  return 'empty'
 }
 
 export function writeStarter(base: StarterBase): void {
