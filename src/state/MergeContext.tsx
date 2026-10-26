@@ -232,26 +232,33 @@ export function MergeProvider({ children }: { children: ReactNode }) {
     [sources, choice, outputModel],
   )
 
-  /** 结果的落点画布。用 ref 保持身份稳定 —— 3D 预览不能每次重算就重建 viewer */
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  if (!canvasRef.current && typeof document !== 'undefined') {
+  /**
+   * 结果的落点画布。身份必须稳定 —— 它作为 `skinSource` 传给 3D 预览，
+   * 每次重算就换一张画布的话，viewer 会被反复重建。
+   *
+   * 用 useState 惰性初始化：初始化函数只在挂载时跑一次。不再在渲染期读写 ref。
+   * 保留 `typeof document` 判断，是为了这个模块在没有 DOM 的环境里被 import
+   * 时（例如 node 下跑脚本）不直接抛错。
+   */
+  const [resultCanvas] = useState<HTMLCanvasElement | null>(() => {
+    if (typeof document === 'undefined') return null
     const canvas = document.createElement('canvas')
     canvas.width = SKIN_SIZE
     canvas.height = SKIN_SIZE
-    canvasRef.current = canvas
-  }
+    return canvas
+  })
 
   const [resultVersion, setResultVersion] = useState(0)
 
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = resultCanvas
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
     ctx.clearRect(0, 0, SKIN_SIZE, SKIN_SIZE)
     if (result) ctx.putImageData(result.image, 0, 0)
     setResultVersion((v) => v + 1)
-  }, [result])
+  }, [result, resultCanvas])
 
   const mergedName = useMemo(
     () => nameOverride ?? mergeBaseName(sources),
@@ -268,7 +275,7 @@ export function MergeProvider({ children }: { children: ReactNode }) {
 
   const exportMerged = useCallback(
     async (baseName?: string) => {
-      const canvas = canvasRef.current
+      const canvas = resultCanvas
       if (!canvas || !result) {
         flash('先载入至少一张皮肤')
         return false
@@ -315,7 +322,7 @@ export function MergeProvider({ children }: { children: ReactNode }) {
         return false
       }
     },
-    [result, mergedName, outputModel, flash, sources, choice],
+    [result, resultCanvas, mergedName, outputModel, flash, sources, choice],
   )
 
   const dismissExport = useCallback(() => setExported(null), [])
@@ -434,7 +441,7 @@ export function MergeProvider({ children }: { children: ReactNode }) {
       outputModel,
       setOutputModel,
       result,
-      resultCanvas: canvasRef.current,
+      resultCanvas,
       resultVersion,
       mergedName,
       exported,
@@ -446,6 +453,7 @@ export function MergeProvider({ children }: { children: ReactNode }) {
     }),
     [
       sources,
+      resultCanvas,
       loadSourceFile,
       copyCurrentSkin,
       clearSource,

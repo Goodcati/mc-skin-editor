@@ -178,10 +178,18 @@ export interface EditorContextValue {
 const EditorContext = createContext<EditorContextValue | null>(null)
 
 export function EditorProvider({ children }: { children: ReactNode }) {
-  // 文档实例必须跨渲染保持同一个对象，用 ref 保证身份稳定
-  const docRef = useRef<SkinDocument | null>(null)
-  if (!docRef.current) docRef.current = new SkinDocument()
-  const doc = docRef.current
+  /*
+    文档实例必须跨渲染保持同一个对象：它装着像素和撤销栈，换一个就等于
+    「切个工具，画的东西全没了」。
+
+    用 useState 的惰性初始化拿到这个身份 —— 初始化函数只在挂载时执行一次，
+    之后 state 值一直复用，所以身份是稳的。（StrictMode 下初始化函数会被调
+    两次、丢掉一个实例，那是开发期的行为，正式构建不会。）
+
+    别写成 `if (!ref.current) ref.current = new SkinDocument()`：那在渲染期读写
+    ref，React 编译器会拒绝优化整个 Provider，实测 oxlint 报 5 条 refs。
+  */
+  const [doc] = useState(() => new SkinDocument())
 
   const [tool, setTool] = useState<ToolId>('pencil')
   const [color, setColorState] = useState(DEFAULT_COLOR)
