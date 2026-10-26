@@ -1,6 +1,13 @@
 @import 'tailwindcss';
 @import './theme.css';
 
+/* Tailwind v4 会自动扫描全仓文本找类名，连 .md 和 .mts 都算。
+   docs/ 里写着示例类名（`rounded-2xl`、`text-[13px]`），scripts/scan-style.mts
+   的规则正则里也有一串圆角档位 —— 它们会被当成真实使用、生成一堆用不到的工具类。
+   这两行把它们排除在扫描外。加新目录时如果里面写了示例类名，也照这个排除。 */
+@source not '../docs';
+@source not '../scripts';
+
 html,
 body,
 #root {
