@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:offline": "tsc -b && vite build --mode offline --outDir dist-offline",
+    "build:offline": "tsc -b && vite build --mode offline --outDir dist-offline && node scripts/fix-offline-html.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "gen:samples": "tsx scripts/make-sample-skins.mts",
