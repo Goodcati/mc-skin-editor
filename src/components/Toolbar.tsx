@@ -24,9 +24,9 @@ const TOOLS: { id: ToolId; label: string; shortcut: string; icon: LucideIcon; hi
 
 function Section({ title, aside, children }: { title: string; aside?: ReactNode; children: ReactNode }) {
   return (
-    <div className="border-b border-white/[0.06] px-3 py-3">
+    <div className="border-b border-wash-6 px-3 py-3">
       <div className="mb-2 flex items-baseline justify-between gap-2">
-        <p className="text-[10px] font-medium tracking-[0.12em] text-slate-600">{title}</p>
+        <p className="text-10 font-medium tracking-[0.12em] text-fg-6">{title}</p>
         {aside}
       </div>
       {children}
@@ -56,10 +56,10 @@ function Chip({
       disabled={disabled}
       title={title ?? label}
       className={
-        'flex items-center justify-center gap-1 rounded-md border px-1.5 py-1.5 text-[11px] transition-colors ' +
+        'flex items-center justify-center gap-1 rounded-md border px-1.5 py-1.5 text-11 transition-colors ' +
         (active
-          ? 'border-emerald-400/40 bg-emerald-400/12 text-emerald-300'
-          : 'border-white/[0.07] bg-white/[0.03] text-slate-400 enabled:hover:border-white/15 enabled:hover:bg-white/[0.07] enabled:hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-40')
+          ? 'border-accent-400/40 bg-accent-400/12 text-accent-300'
+          : 'border-wash-7 bg-wash-3 text-fg-4 enabled:hover:border-wash-15 enabled:hover:bg-wash-7 enabled:hover:text-fg-2 disabled:cursor-not-allowed disabled:opacity-40')
       }
     >
       <Icon size={13} strokeWidth={2} />
@@ -87,16 +87,16 @@ function RecentRail({
 }) {
   const count = colors.length
   return (
-    <aside className="flex min-h-0 w-9 shrink-0 flex-col items-center border-r border-white/[0.07]">
+    <aside className="flex min-h-0 w-9 shrink-0 flex-col items-center border-r border-wash-7">
       <div
-        className="flex h-8 w-full shrink-0 items-center justify-center border-b border-white/[0.06]"
+        className="flex h-8 w-full shrink-0 items-center justify-center border-b border-wash-6"
         title={
           count === 0
             ? '最近使用：画布上真正涂过的颜色会自上而下出现在这里'
             : `最近使用 ${count}/${MAX_RECENT_COLORS}：自上而下由新到旧，点一下即切换为这支颜色`
         }
       >
-        <span className="text-[9px] font-medium tracking-wide text-slate-600">最近</span>
+        <span className="text-9 font-medium tracking-wide text-fg-6">最近</span>
       </div>
 
       <div className="thin-scroll flex min-h-0 flex-1 flex-col items-center gap-[3px] overflow-y-auto py-2">
@@ -105,7 +105,7 @@ function RecentRail({
               <span
                 key={i}
                 aria-hidden
-                className="h-[26px] w-[26px] shrink-0 rounded-[4px] border border-dashed border-white/[0.09]"
+                className="h-[26px] w-[26px] shrink-0 rounded-sm border border-dashed border-wash-9"
               />
             ))
           : colors.map((hex) => (
@@ -116,10 +116,10 @@ function RecentRail({
                 aria-label={`最近使用的颜色 ${hex}`}
                 onClick={() => onPick(hex)}
                 className={
-                  'h-[26px] w-[26px] shrink-0 rounded-[4px] transition-shadow ' +
+                  'h-[26px] w-[26px] shrink-0 rounded-sm transition-shadow ' +
                   (hex === active
-                    ? 'ring-2 ring-inset ring-emerald-300'
-                    : 'ring-1 ring-inset ring-white/[0.14] hover:ring-white/45')
+                    ? 'ring-2 ring-inset ring-accent-300'
+                    : 'ring-1 ring-inset ring-wash-14 hover:ring-wash-45')
                 }
                 style={{ backgroundColor: hex }}
               />
@@ -149,9 +149,9 @@ export default function Toolbar() {
   } = useEditor()
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden bg-[#12161f]">
-      <header className="flex h-8 shrink-0 items-center border-b border-white/[0.07] px-3">
-        <span className="text-[11px] font-medium tracking-wide text-slate-400">工具栏</span>
+    <div className="flex h-full w-full flex-col overflow-hidden bg-surface-panel">
+      <header className="flex h-8 shrink-0 items-center border-b border-wash-7 px-3">
+        <span className="text-11 font-medium tracking-wide text-fg-4">工具栏</span>
       </header>
 
       <div className="flex min-h-0 flex-1">
@@ -195,7 +195,7 @@ export default function Toolbar() {
             title="文件"
             aside={
               lastSavedAt !== null ? (
-                <span className="font-mono text-[10px] text-slate-600">
+                <span className="font-mono text-10 text-fg-6">
                   上次保存 {formatSavedAt(lastSavedAt)}
                 </span>
               ) : undefined
@@ -204,7 +204,7 @@ export default function Toolbar() {
             <div className="grid grid-cols-2 gap-1.5">
               <SkinImportButton
                 title="导入皮肤 PNG（64×64 或旧版 64×32）"
-                className="flex items-center justify-center gap-1 rounded-md border border-white/[0.07] bg-white/[0.03] px-1.5 py-1.5 text-[11px] text-slate-400 transition-colors enabled:hover:border-white/15 enabled:hover:bg-white/[0.07] enabled:hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex items-center justify-center gap-1 rounded-md border border-wash-7 bg-wash-3 px-1.5 py-1.5 text-11 text-fg-4 transition-colors enabled:hover:border-wash-15 enabled:hover:bg-wash-7 enabled:hover:text-fg-2 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Upload size={13} strokeWidth={2} />
                 <span className="truncate">导入</span>
@@ -216,17 +216,17 @@ export default function Toolbar() {
                 aria-checked={autosaveEnabled}
                 onClick={() => setAutosaveEnabled(!autosaveEnabled)}
                 title="开启后每次落笔结束都会把皮肤暂存到浏览器本地，意外关闭页面后可以恢复"
-                className="flex items-center justify-center gap-1.5 rounded-md border border-white/[0.07] bg-white/[0.03] px-1.5 py-1.5 text-[11px] text-slate-300 transition-colors hover:border-white/15"
+                className="flex items-center justify-center gap-1.5 rounded-md border border-wash-7 bg-wash-3 px-1.5 py-1.5 text-11 text-fg-3 transition-colors hover:border-wash-15"
               >
                 <ShieldCheck
                   size={13}
                   strokeWidth={2}
-                  className={autosaveEnabled ? 'text-emerald-300' : 'text-slate-500'}
+                  className={autosaveEnabled ? 'text-accent-300' : 'text-fg-5'}
                 />
                 自动保存
                 <span
                   className={`relative h-3.5 w-6 shrink-0 rounded-full transition-colors ${
-                    autosaveEnabled ? 'bg-emerald-400/80' : 'bg-white/15'
+                    autosaveEnabled ? 'bg-accent-400/80' : 'bg-wash-15'
                   }`}
                 >
                   <span
@@ -242,7 +242,7 @@ export default function Toolbar() {
               type="button"
               onClick={() => saveNow('manual')}
               title="立即保存到浏览器本地 (Ctrl+S)"
-              className="mt-1.5 flex w-full items-center justify-center gap-1 rounded-md border border-white/[0.07] bg-white/[0.03] px-1.5 py-2 text-[11px] text-slate-400 transition-colors enabled:hover:border-white/15 enabled:hover:bg-white/[0.07] enabled:hover:text-slate-200"
+              className="mt-1.5 flex w-full items-center justify-center gap-1 rounded-md border border-wash-7 bg-wash-3 px-1.5 py-2 text-11 text-fg-4 transition-colors enabled:hover:border-wash-15 enabled:hover:bg-wash-7 enabled:hover:text-fg-2"
             >
               <Save size={13} strokeWidth={2} />
               <span className="truncate">保存</span>

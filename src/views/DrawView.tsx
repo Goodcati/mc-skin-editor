@@ -83,25 +83,25 @@ export default function DrawView() {
   }, [undo, redo, saveNow, setTool])
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#0f1115] text-slate-200">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-surface-app text-fg-2">
       {/* 顶栏 */}
-      <header className="flex h-11 shrink-0 items-center justify-between border-b border-white/10 bg-[#141821] px-4">
+      <header className="flex h-11 shrink-0 items-center justify-between border-b border-wash-10 bg-surface-chrome px-4">
         <div className="flex items-center gap-2">
           {/* 回大厅。不做成隐藏手势：进来之后没有回头路，只能手改地址栏 */}
           <a
             href="#/"
             aria-label="返回大厅"
             title="返回大厅"
-            className="grid h-6 w-6 place-items-center rounded text-slate-500 transition-colors hover:bg-white/[0.06] hover:text-slate-200"
+            className="grid h-6 w-6 place-items-center rounded text-fg-5 transition-colors hover:bg-wash-6 hover:text-fg-2"
           >
             <ArrowLeft size={14} strokeWidth={2} />
           </a>
-          <span className="grid h-6 w-6 place-items-center rounded bg-emerald-400/15 text-emerald-300">
+          <span className="grid h-6 w-6 place-items-center rounded bg-accent-400/15 text-accent-300">
             <Box size={15} strokeWidth={2} />
           </span>
-          <h1 className="text-[13px] font-semibold tracking-wide">Minecraft 皮肤编辑器</h1>
+          <h1 className="text-13 font-semibold tracking-wide">Minecraft 皮肤编辑器</h1>
           <span
-            className="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px] text-slate-400"
+            className="rounded bg-wash-6 px-1.5 py-0.5 font-mono text-10 text-fg-4"
             title="版本号：主版本.迭代.补丁"
           >
             {APP_VERSION}
@@ -116,10 +116,10 @@ export default function DrawView() {
           体型没有并进这行文字，而是做成了右边的切换控件：它不是纯粹的信息，
           而是**必须由人拍板的一个选择**（PNG 里没有体型，官网上传时要手选）。
         */}
-        <div className="flex items-center gap-3 text-[11px] text-slate-500">
+        <div className="flex items-center gap-3 text-11 text-fg-5">
           <span className="flex items-center gap-1.5">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${skin ? 'bg-emerald-400' : 'bg-amber-400'}`}
+              className={`h-1.5 w-1.5 rounded-full ${skin ? 'bg-accent-400' : 'bg-warn-400'}`}
             />
             {skin ? `${skin.name} · ${skin.width}×${skin.height}` : '未加载皮肤'}
           </span>
@@ -127,7 +127,7 @@ export default function DrawView() {
           <div
             role="group"
             aria-label="体型选择"
-            className="flex overflow-hidden rounded border border-white/[0.07]"
+            className="flex overflow-hidden rounded border border-wash-7"
           >
             {MODEL_KINDS.map((kind) => (
               <button
@@ -139,8 +139,8 @@ export default function DrawView() {
                 className={
                   'px-2 py-0.5 transition-colors ' +
                   (modelType === kind
-                    ? 'bg-emerald-400/15 text-emerald-300'
-                    : 'bg-white/[0.03] text-slate-500 hover:text-slate-300')
+                    ? 'bg-accent-400/15 text-accent-300'
+                    : 'bg-wash-3 text-fg-5 hover:text-fg-3')
                 }
               >
                 {MODEL_LABELS[kind]}
@@ -152,7 +152,7 @@ export default function DrawView() {
             type="button"
             onClick={() => setNaming(true)}
             title={`导出 64×64 PNG；文件名会带上体型（${MODEL_LABELS[modelType]}），上传时照文件名选`}
-            className="flex items-center gap-1.5 rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-1 text-[11px] text-slate-300 transition-colors hover:border-emerald-400/40 hover:text-emerald-300"
+            className="flex items-center gap-1.5 rounded-md border border-wash-7 bg-wash-3 px-2 py-1 text-11 text-fg-3 transition-colors hover:border-accent-400/40 hover:text-accent-300"
           >
             <Download size={12} strokeWidth={2} />
             导出
@@ -163,13 +163,13 @@ export default function DrawView() {
       {/* 三栏主体：左 30% / 中 50% / 右 20% */}
       <main className="flex min-h-0 flex-1">
         {/* 左：整体 3D 预览 */}
-        <div className="w-[30%] min-w-[260px] border-r border-white/10">
+        <div className="w-[30%] min-w-[260px] border-r border-wash-10">
           <OverallPreview />
         </div>
 
         {/* 中：上 部位预览 / 下 2D 编辑画布 */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="min-h-0 basis-[40%] border-b border-white/10">
+          <div className="min-h-0 basis-[40%] border-b border-wash-10">
             <PartPreview />
           </div>
           <div className="min-h-0 basis-[60%]">
@@ -178,7 +178,7 @@ export default function DrawView() {
         </div>
 
         {/* 右：工具栏 */}
-        <div className="w-[20%] min-w-[190px] border-l border-white/10">
+        <div className="w-[20%] min-w-[190px] border-l border-wash-10">
           <Toolbar />
         </div>
       </main>

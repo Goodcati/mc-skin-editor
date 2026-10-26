@@ -130,16 +130,16 @@ export default function Lobby() {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#0f1115] text-slate-200">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-surface-app text-fg-2">
       {/* 顶栏：左品牌。品牌块与绘制页顶栏保持一致，切页时不会跳位 */}
-      <header className="flex h-11 shrink-0 items-center border-b border-white/10 bg-[#141821] px-4">
+      <header className="flex h-11 shrink-0 items-center border-b border-wash-10 bg-surface-chrome px-4">
         <div className="flex items-center gap-2">
-          <span className="grid h-6 w-6 place-items-center rounded bg-emerald-400/15 text-emerald-300">
+          <span className="grid h-6 w-6 place-items-center rounded bg-accent-400/15 text-accent-300">
             <Box size={15} strokeWidth={2} />
           </span>
-          <h1 className="text-[13px] font-semibold tracking-wide">Minecraft 皮肤编辑器</h1>
+          <h1 className="text-13 font-semibold tracking-wide">Minecraft 皮肤编辑器</h1>
           <span
-            className="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px] text-slate-400"
+            className="rounded bg-wash-6 px-1.5 py-0.5 font-mono text-10 text-fg-4"
             title="版本号：主版本.迭代.补丁"
           >
             {APP_VERSION}
@@ -166,15 +166,15 @@ export default function Lobby() {
       </main>
 
       {/* 底部通栏：作品库（「我的皮肤」）。空态 + 真实列表 */}
-      <footer className="flex h-[104px] shrink-0 flex-col border-t border-white/10 bg-[#141821] px-4 py-2">
+      <footer className="flex h-[104px] shrink-0 flex-col border-t border-wash-10 bg-surface-chrome px-4 py-2">
         <div className="flex shrink-0 items-center justify-between">
-          <span className="text-[11px] font-medium tracking-wide text-slate-400">我的皮肤</span>
+          <span className="text-11 font-medium tracking-wide text-fg-4">我的皮肤</span>
           <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={exportBackup}
               title="把作品库导出成 JSON 文件，可备份、可换机器恢复"
-              className="flex items-center gap-1 rounded border border-white/[0.07] bg-white/[0.03] px-1.5 py-0.5 text-[10px] text-slate-400 transition-colors hover:border-emerald-400/40 hover:text-emerald-300"
+              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
             >
               <Download size={11} strokeWidth={2} />
               导出备份
@@ -183,11 +183,25 @@ export default function Lobby() {
               type="button"
               onClick={() => backupInputRef.current?.click()}
               title="从 JSON 备份文件恢复作品（只新增，不覆盖现有作品）"
-              className="flex items-center gap-1 rounded border border-white/[0.07] bg-white/[0.03] px-1.5 py-0.5 text-[10px] text-slate-400 transition-colors hover:border-emerald-400/40 hover:text-emerald-300"
+              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
             >
               <Upload size={11} strokeWidth={2} />
               导入备份
             </button>
+            {/*
+              离线版下载：静态文件，直接指 public/download/ 下的 zip。
+              路径必须走 BASE_URL —— Vite 的 base 不重写运行时字符串，
+              写死 /download/... 在子路径部署下会 404。
+            */}
+            <a
+              href={`${import.meta.env.BASE_URL}download/mse-offline.zip`}
+              download
+              title="下载离线版：解压后双击 index.html，不联网也能用"
+              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
+            >
+              <Download size={11} strokeWidth={2} />
+              下载离线版
+            </a>
             <input
               ref={backupInputRef}
               type="file"
@@ -203,7 +217,7 @@ export default function Lobby() {
           </div>
         </div>
         {works.length === 0 ? (
-          <span className="mt-1.5 truncate text-[11px] text-slate-600">
+          <span className="mt-1.5 truncate text-11 text-fg-6">
             还没有作品 · 导出一张就会出现在这里
           </span>
         ) : (
@@ -221,7 +235,7 @@ export default function Lobby() {
                     ? `打开「${work.name}」继续绘制`
                     : `打开「${work.name}」恢复合成`
                 }
-                className="group flex w-[120px] shrink-0 flex-col items-center gap-1 rounded-lg border border-white/[0.07] bg-white/[0.02] p-1.5 text-left transition-colors hover:border-emerald-400/40"
+                className="group flex w-[120px] shrink-0 flex-col items-center gap-1 rounded-lg border border-wash-7 bg-wash-2 p-1.5 text-left transition-colors hover:border-accent-400/40"
               >
                 <span className="relative">
                   <WorkHeadThumb work={work} />
@@ -234,15 +248,15 @@ export default function Lobby() {
                       event.stopPropagation()
                       setPendingDelete(work)
                     }}
-                    className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full border border-white/[0.09] bg-[#1a202b] text-slate-400 opacity-0 transition-opacity hover:text-rose-300 group-hover:opacity-100"
+                    className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full border border-wash-9 bg-surface-chip text-fg-4 opacity-0 transition-opacity hover:text-danger-300 group-hover:opacity-100"
                   >
                     <Trash2 size={11} strokeWidth={2} />
                   </span>
                 </span>
-                <span className="w-full truncate text-center text-[11px] text-slate-300">
+                <span className="w-full truncate text-center text-11 text-fg-3">
                   {work.name}
                 </span>
-                <span className="text-[9px] text-slate-600">
+                <span className="text-9 text-fg-6">
                   {work.kind === 'draw' ? '绘制' : '合成'} · {describeAgo(work.updatedAt)}
                 </span>
               </button>
@@ -326,7 +340,7 @@ function WorkHeadThumb({ work }: { work: WorkItem }) {
       <img
         src={src}
         alt={work.name}
-        className="h-12 w-12 rounded border border-white/10 bg-[#0b0e13]"
+        className="h-12 w-12 rounded border border-wash-10 bg-surface-inset"
         style={{ imageRendering: src === work.dataUrl ? 'pixelated' : 'auto' }}
       />
     </span>
@@ -362,15 +376,15 @@ function ConfirmNewDialog({
         role="dialog"
         aria-modal="true"
         aria-label="继续还是新建"
-        className="w-[360px] max-w-full rounded-xl border border-white/10 bg-[#151a24] p-4 shadow-2xl"
+        className="w-[360px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-4 shadow-2xl"
       >
         <header className="flex items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-amber-400/15 text-amber-300">
+          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-warn-400/15 text-warn-300">
             <Paintbrush size={15} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 className="text-[13px] font-semibold text-slate-100">有未完成的绘制</h2>
-            <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500">
+            <h2 className="text-13 font-semibold text-fg-1">有未完成的绘制</h2>
+            <p className="mt-0.5 text-11 leading-relaxed text-fg-5">
               上次的皮肤还没导出。可以接着画，也可以另起一张新的。
             </p>
           </div>
@@ -380,7 +394,7 @@ function ConfirmNewDialog({
           <button
             type="button"
             onClick={onContinue}
-            className="flex items-center justify-center rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1.5 text-[11px] text-emerald-300 transition-colors hover:border-emerald-400/55"
+            className="flex items-center justify-center rounded-md border border-accent-400/30 bg-accent-400/10 px-2 py-1.5 text-11 text-accent-300 transition-colors hover:border-accent-400/55"
           >
             继续上次
           </button>
@@ -388,7 +402,7 @@ function ConfirmNewDialog({
             type="button"
             onClick={onNew}
             title="清空当前画布，另起一张新的"
-            className="flex items-center justify-center rounded-md border border-white/[0.09] bg-white/[0.04] px-2 py-1.5 text-[11px] text-slate-300 transition-colors hover:border-white/20"
+            className="flex items-center justify-center rounded-md border border-wash-9 bg-wash-4 px-2 py-1.5 text-11 text-fg-3 transition-colors hover:border-wash-20"
           >
             新建并清空
           </button>
@@ -427,15 +441,15 @@ function ConfirmDeleteDialog({
         role="dialog"
         aria-modal="true"
         aria-label="删除作品确认"
-        className="w-[340px] max-w-full rounded-xl border border-white/10 bg-[#151a24] p-4 shadow-2xl"
+        className="w-[340px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-4 shadow-2xl"
       >
         <header className="flex items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-rose-400/15 text-rose-300">
+          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-danger-400/15 text-danger-300">
             <Trash2 size={15} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 className="text-[13px] font-semibold text-slate-100">删除「{name}」？</h2>
-            <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500">
+            <h2 className="text-13 font-semibold text-fg-1">删除「{name}」？</h2>
+            <p className="mt-0.5 text-11 leading-relaxed text-fg-5">
               删除后不可恢复，会从作品库里彻底移除。
             </p>
           </div>
@@ -445,14 +459,14 @@ function ConfirmDeleteDialog({
           <button
             type="button"
             onClick={onConfirm}
-            className="flex items-center justify-center rounded-md border border-rose-400/30 bg-rose-400/10 px-2 py-1.5 text-[11px] text-rose-300 transition-colors hover:border-rose-400/55"
+            className="flex items-center justify-center rounded-md border border-danger-400/30 bg-danger-400/10 px-2 py-1.5 text-11 text-danger-300 transition-colors hover:border-danger-400/55"
           >
             删除
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="flex items-center justify-center rounded-md border border-white/[0.09] bg-white/[0.04] px-2 py-1.5 text-[11px] text-slate-300 transition-colors hover:border-white/20"
+            className="flex items-center justify-center rounded-md border border-wash-9 bg-wash-4 px-2 py-1.5 text-11 text-fg-3 transition-colors hover:border-wash-20"
           >
             取消
           </button>
@@ -484,10 +498,10 @@ function CurrentSkin() {
         width={64}
         height={64}
         aria-label="当前皮肤缩略图"
-        className="h-32 w-32 rounded-lg border border-white/10 bg-[#0b0e13]"
+        className="h-32 w-32 rounded-lg border border-wash-10 bg-surface-inset"
         style={{ imageRendering: 'pixelated' }}
       />
-      <span className="text-[11px] text-slate-500">
+      <span className="text-11 text-fg-5">
         {skin ? `继续编辑 · ${skin.name}` : '未加载皮肤'}
       </span>
     </span>
@@ -496,15 +510,15 @@ function CurrentSkin() {
 
 /** 合成卡里的示意图：两张皮肤各出一部分，拼成一张 */
 function MergeSketch() {
-  const patch = 'h-12 w-7 rounded-sm border border-white/[0.09]'
+  const patch = 'h-12 w-7 rounded-sm border border-wash-9'
   return (
     <span className="flex items-center gap-2.5">
-      <span className={`${patch} bg-cyan-500/20`} />
-      <span className={`${patch} bg-emerald-500/20`} />
-      <MoveRight size={14} strokeWidth={2} className="text-slate-700" />
-      <span className="flex h-12 w-7 flex-col overflow-hidden rounded-sm border border-white/[0.14]">
-        <span className="flex-1 bg-cyan-500/25" />
-        <span className="flex-1 bg-emerald-500/25" />
+      <span className={`${patch} bg-alt-500/20`} />
+      <span className={`${patch} bg-accent-500/20`} />
+      <MoveRight size={14} strokeWidth={2} className="text-fg-7" />
+      <span className="flex h-12 w-7 flex-col overflow-hidden rounded-sm border border-wash-14">
+        <span className="flex-1 bg-alt-500/25" />
+        <span className="flex-1 bg-accent-500/25" />
       </span>
     </span>
   )
@@ -525,13 +539,13 @@ function LobbyCard({ icon: Icon, title, desc, onClick, extra }: LobbyCardProps) 
       type="button"
       onClick={onClick}
       aria-label={`新建${title}`}
-      className="group flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-white/[0.08] bg-[#12161f] transition-colors hover:border-emerald-400/40 hover:bg-emerald-400/[0.04]"
+      className="group flex flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-wash-8 bg-surface-panel transition-colors hover:border-accent-400/40 hover:bg-accent-400/[0.04]"
     >
-      <span className="grid h-14 w-14 place-items-center rounded-xl border border-emerald-400/25 bg-emerald-400/10 text-emerald-300 transition-colors group-hover:border-emerald-400/50">
+      <span className="grid h-14 w-14 place-items-center rounded-xl border border-accent-400/25 bg-accent-400/10 text-accent-300 transition-colors group-hover:border-accent-400/50">
         <Icon size={26} strokeWidth={1.6} />
       </span>
-      <span className="mt-1 text-[18px] font-medium tracking-wide text-slate-100">{title}</span>
-      <span className="text-[12px] text-slate-500">{desc}</span>
+      <span className="mt-1 text-18 font-medium tracking-wide text-fg-1">{title}</span>
+      <span className="text-12 text-fg-5">{desc}</span>
       {extra}
     </button>
   )

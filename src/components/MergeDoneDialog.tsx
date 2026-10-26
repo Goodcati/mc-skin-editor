@@ -52,15 +52,15 @@ export default function MergeDoneDialog({
         role="dialog"
         aria-modal="true"
         aria-label="合成完成"
-        className="w-[392px] max-w-full rounded-xl border border-white/10 bg-[#151a24] p-4 shadow-2xl"
+        className="w-[392px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-4 shadow-2xl"
       >
         <header className="flex items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-emerald-400/15 text-emerald-300">
+          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-400/15 text-accent-300">
             <CircleCheck size={16} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 className="text-[13px] font-semibold text-slate-100">合成完成</h2>
-            <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500">
+            <h2 className="text-13 font-semibold text-fg-1">合成完成</h2>
+            <p className="mt-0.5 text-11 leading-relaxed text-fg-5">
               文件已交给浏览器下载，名字带「合成-」前缀，和绘制作品分得开。
             </p>
           </div>
@@ -69,30 +69,30 @@ export default function MergeDoneDialog({
             aria-label="关闭合成完成提示"
             title="关掉（合成结果保留）"
             onClick={onClose}
-            className="grid h-6 w-6 shrink-0 place-items-center rounded text-slate-600 transition-colors hover:bg-white/[0.06] hover:text-slate-300"
+            className="grid h-6 w-6 shrink-0 place-items-center rounded text-fg-6 transition-colors hover:bg-wash-6 hover:text-fg-3"
           >
             <X size={13} strokeWidth={2} />
           </button>
         </header>
 
-        <dl className="mt-3 space-y-1 rounded-lg border border-white/[0.07] bg-white/[0.02] px-2.5 py-2 text-[11px]">
+        <dl className="mt-3 space-y-1 rounded-lg border border-wash-7 bg-wash-2 px-2.5 py-2 text-11">
           <div className="flex gap-2">
-            <dt className="w-12 shrink-0 text-slate-600">文件名</dt>
-            <dd className="min-w-0 flex-1 truncate font-mono text-slate-300" title={info.filename}>
+            <dt className="w-12 shrink-0 text-fg-6">文件名</dt>
+            <dd className="min-w-0 flex-1 truncate font-mono text-fg-3" title={info.filename}>
               {info.filename}
             </dd>
           </div>
           <div className="flex gap-2">
-            <dt className="w-12 shrink-0 text-slate-600">层数</dt>
-            <dd className="flex-1 text-slate-400">
+            <dt className="w-12 shrink-0 text-fg-6">层数</dt>
+            <dd className="flex-1 text-fg-4">
               {info.layers === 'double' ? '双层（含帽子 / 外套等第二层）' : '单层'}
             </dd>
           </div>
           <div className="flex gap-2">
-            <dt className="w-12 shrink-0 text-slate-600">体型</dt>
-            <dd className="flex-1 text-slate-400">
+            <dt className="w-12 shrink-0 text-fg-6">体型</dt>
+            <dd className="flex-1 text-fg-4">
               {MODEL_LABELS[info.model]}
-              <span className="ml-1 text-slate-600">
+              <span className="ml-1 text-fg-6">
                 · 在 Minecraft 官网 / 启动器上传时请选这一项
               </span>
             </dd>
@@ -104,7 +104,7 @@ export default function MergeDoneDialog({
           对话框是他刚导出、注意力还在这件事上的最后一个时机。
         */}
         {holes > 0 && (
-          <p className="mt-2 flex items-start gap-1.5 rounded border border-rose-400/25 bg-rose-400/[0.07] px-2 py-1.5 text-[10px] leading-relaxed text-rose-300">
+          <p className="mt-2 flex items-start gap-1.5 rounded border border-danger-400/25 bg-danger-400/[0.07] px-2 py-1.5 text-10 leading-relaxed text-danger-300">
             <TriangleAlert size={11} strokeWidth={2} className="mt-0.5 shrink-0" />
             第一层有 {holes} 个透明像素，进游戏会显示成黑色。建议换一张源图再合一次
           </p>
@@ -117,7 +117,7 @@ export default function MergeDoneDialog({
             aria-label="继续合成新的皮肤"
             onClick={onStartNew}
             title="清空当前两张源图，留在合成页重新开始"
-            className="flex items-center justify-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1.5 text-[11px] text-emerald-300 transition-colors hover:border-emerald-400/55"
+            className="flex items-center justify-center gap-1.5 rounded-md border border-accent-400/30 bg-accent-400/10 px-2 py-1.5 text-11 text-accent-300 transition-colors hover:border-accent-400/55"
           >
             <RotateCcw size={12} strokeWidth={2} />
             继续合成新的
@@ -127,7 +127,7 @@ export default function MergeDoneDialog({
             aria-label="回到大厅"
             onClick={onLobby}
             title="离开合成页，回到大厅"
-            className="flex items-center justify-center gap-1.5 rounded-md border border-white/[0.09] bg-white/[0.04] px-2 py-1.5 text-[11px] text-slate-300 transition-colors hover:border-white/20"
+            className="flex items-center justify-center gap-1.5 rounded-md border border-wash-9 bg-wash-4 px-2 py-1.5 text-11 text-fg-3 transition-colors hover:border-wash-20"
           >
             <House size={12} strokeWidth={2} />
             回到大厅

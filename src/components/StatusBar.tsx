@@ -16,19 +16,19 @@ export default function StatusBar() {
   const { tool, color, cursor, status, doc, selectedPart, setSelectedPart, flash } = useEditor()
 
   return (
-    <footer className="flex h-7 shrink-0 items-center gap-4 border-t border-white/10 bg-[#141821] px-4 text-[11px] text-slate-500">
+    <footer className="flex h-7 shrink-0 items-center gap-4 border-t border-wash-10 bg-surface-chrome px-4 text-11 text-fg-5">
       <span className="flex items-center gap-1.5">
-        <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+        <span className="h-1.5 w-1.5 rounded-full bg-info-400" />
         {TOOL_LABEL[tool] ?? tool}
       </span>
 
       <span className="flex items-center gap-1.5">
         颜色
         <span
-          className="inline-block h-3 w-3 rounded-sm ring-1 ring-white/20"
+          className="inline-block h-3 w-3 rounded-sm ring-1 ring-wash-20"
           style={{ backgroundColor: color }}
         />
-        <span className="font-mono text-slate-400">{color}</span>
+        <span className="font-mono text-fg-4">{color}</span>
       </span>
 
       {/* 坐标是「面内局部坐标」，和画布上看到的方块一一对应 */}
@@ -44,17 +44,17 @@ export default function StatusBar() {
             flash('已取消选择')
           }}
           title="取消选中（Esc）"
-          className="flex items-center gap-1.5 rounded bg-sky-400/12 px-2 py-0.5 text-sky-300 transition-colors hover:bg-sky-400/20"
+          className="flex items-center gap-1.5 rounded bg-info-400/12 px-2 py-0.5 text-info-300 transition-colors hover:bg-info-400/20"
         >
           选中：{BODY_KEY_LABELS[selectedPart]}
-          <span className="text-sky-400/70">✕</span>
+          <span className="text-info-400/70">✕</span>
         </button>
       ) : (
         <span>选中：—</span>
       )}
 
       {status && (
-        <span className="ml-auto shrink-0 rounded bg-emerald-400/10 px-2 py-0.5 text-emerald-300">
+        <span className="ml-auto shrink-0 rounded bg-accent-400/10 px-2 py-0.5 text-accent-300">
           {status}
         </span>
       )}

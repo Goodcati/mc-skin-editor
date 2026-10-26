@@ -210,7 +210,7 @@ export default function SkinViewport({
       <canvas ref={canvasRef} aria-label={ariaLabel} className="block" />
       {overlay}
       {bottomHint && (
-        <p className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-[10px] text-slate-500">
+        <p className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-10 text-fg-5">
           {bottomHint}
         </p>
       )}

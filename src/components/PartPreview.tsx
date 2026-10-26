@@ -431,7 +431,7 @@ export default function PartPreview() {
       hint={selectedPart ? undefined : '未选中部件'}
     >
       <div className="flex h-full w-full flex-col">
-        <div className="flex shrink-0 flex-wrap items-center gap-1 border-b border-white/[0.07] px-2 py-1.5">
+        <div className="flex shrink-0 flex-wrap items-center gap-1 border-b border-wash-7 px-2 py-1.5">
           {FACE_IDS.map((id) => (
             <button
               key={id}
@@ -444,12 +444,12 @@ export default function PartPreview() {
                   : '先点左侧模型选一个部位'
               }
               className={
-                'rounded border px-2 py-0.5 text-[11px] transition-colors ' +
+                'rounded border px-2 py-0.5 text-11 transition-colors ' +
                 (!selectedPart
-                  ? 'cursor-not-allowed border-white/[0.05] bg-white/[0.02] text-slate-700'
+                  ? 'cursor-not-allowed border-wash-5 bg-wash-2 text-fg-7'
                   : id === face
-                    ? 'border-emerald-400/40 bg-emerald-400/12 text-emerald-300'
-                    : 'border-white/[0.07] bg-white/[0.03] text-slate-400 hover:border-white/15 hover:text-slate-200')
+                    ? 'border-accent-400/40 bg-accent-400/12 text-accent-300'
+                    : 'border-wash-7 bg-wash-3 text-fg-4 hover:border-wash-15 hover:text-fg-2')
               }
             >
               {FACE_LABELS[id]}

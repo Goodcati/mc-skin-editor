@@ -79,23 +79,23 @@ export default function MergeView() {
   const ready = result !== null
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#0f1115] text-slate-200">
-      <header className="flex h-11 shrink-0 items-center justify-between border-b border-white/10 bg-[#141821] px-4">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-surface-app text-fg-2">
+      <header className="flex h-11 shrink-0 items-center justify-between border-b border-wash-10 bg-surface-chrome px-4">
         <div className="flex items-center gap-2">
           <a
             href="#/"
             aria-label="返回大厅"
             title="返回大厅"
-            className="grid h-6 w-6 place-items-center rounded text-slate-500 transition-colors hover:bg-white/[0.06] hover:text-slate-200"
+            className="grid h-6 w-6 place-items-center rounded text-fg-5 transition-colors hover:bg-wash-6 hover:text-fg-2"
           >
             <ArrowLeft size={14} strokeWidth={2} />
           </a>
-          <span className="grid h-6 w-6 place-items-center rounded bg-emerald-400/15 text-emerald-300">
+          <span className="grid h-6 w-6 place-items-center rounded bg-accent-400/15 text-accent-300">
             <Box size={15} strokeWidth={2} />
           </span>
-          <h1 className="text-[13px] font-semibold tracking-wide">合成皮肤</h1>
+          <h1 className="text-13 font-semibold tracking-wide">合成皮肤</h1>
           <span
-            className="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px] text-slate-400"
+            className="rounded bg-wash-6 px-1.5 py-0.5 font-mono text-10 text-fg-4"
             title="版本号：主版本.迭代.补丁"
           >
             {APP_VERSION}
@@ -106,7 +106,7 @@ export default function MergeView() {
           输出体型。和绘制页那个是同一件事：PNG 里没有体型，官网上传时要手选。
           合成结果按这个体型排手臂贴图，所以它既是导出文件名的后缀，也是输出布局。
         */}
-        <div className="flex items-center gap-3 text-[11px] text-slate-500">
+        <div className="flex items-center gap-3 text-11 text-fg-5">
           <span>输出体型</span>
           <ModelToggle
             value={outputModel}
@@ -118,7 +118,7 @@ export default function MergeView() {
             disabled={!ready}
             onClick={() => setNaming(true)}
             title="导出 64×64 PNG，可直接导入 Minecraft"
-            className="flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 text-[11px] text-emerald-300 transition-colors hover:border-emerald-400/55 disabled:cursor-not-allowed disabled:border-white/[0.05] disabled:bg-transparent disabled:text-slate-700"
+            className="flex items-center gap-1.5 rounded-md border border-accent-400/30 bg-accent-400/10 px-2 py-1 text-11 text-accent-300 transition-colors hover:border-accent-400/55 disabled:cursor-not-allowed disabled:border-wash-5 disabled:bg-transparent disabled:text-fg-7"
           >
             <Download size={12} strokeWidth={2} />
             导出
@@ -127,26 +127,26 @@ export default function MergeView() {
       </header>
 
       <main className="flex min-h-0 flex-1">
-        <div className="flex w-[300px] min-w-[292px] flex-col gap-2 border-r border-white/10 p-2">
-          <p className="shrink-0 px-1 text-[11px] font-medium tracking-wide text-slate-400">
+        <div className="flex w-[300px] min-w-[292px] flex-col gap-2 border-r border-wash-10 p-2">
+          <p className="shrink-0 px-1 text-11 font-medium tracking-wide text-fg-4">
             源皮肤
-            <span className="ml-2 font-normal text-slate-600">拖入 PNG，或取当前绘制</span>
+            <span className="ml-2 font-normal text-fg-6">拖入 PNG，或取当前绘制</span>
           </p>
           <SourceCard id="a" />
           <SourceCard id="b" />
           <div className="min-h-0 flex-1" />
           {loaded.length < 2 && (
-            <p className="shrink-0 rounded-md border border-white/[0.06] bg-white/[0.02] px-2 py-1.5 text-[10px] leading-relaxed text-slate-600">
+            <p className="shrink-0 rounded-md border border-wash-6 bg-wash-2 px-2 py-1.5 text-10 leading-relaxed text-fg-6">
               只载入一张也能用：整张都是它，改完输出体型直接导出，就等于「转一次体型」。
             </p>
           )}
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex h-8 shrink-0 items-center justify-between border-b border-white/[0.07] px-3">
-            <div className="flex items-center gap-1.5 text-slate-400">
+          <header className="flex h-8 shrink-0 items-center justify-between border-b border-wash-7 px-3">
+            <div className="flex items-center gap-1.5 text-fg-4">
               <Combine size={13} strokeWidth={2} />
-              <span className="text-[11px] font-medium tracking-wide">按部件合成</span>
+              <span className="text-11 font-medium tracking-wide">按部件合成</span>
             </div>
             <div className="flex items-center gap-1.5">
               {SOURCE_IDS.map((id) => (
@@ -157,7 +157,7 @@ export default function MergeView() {
                   aria-label={`全部部件都用${SOURCE_LABELS[id]}`}
                   onClick={() => applyAll(id)}
                   title={`把 6 个部件、两层全部设为${SOURCE_LABELS[id]}`}
-                  className="rounded border border-white/[0.07] bg-white/[0.03] px-2 py-0.5 text-[10px] text-slate-400 transition-colors hover:border-emerald-400/40 hover:text-emerald-300 disabled:cursor-not-allowed disabled:border-white/[0.05] disabled:bg-transparent disabled:text-slate-700"
+                  className="rounded border border-wash-7 bg-wash-3 px-2 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300 disabled:cursor-not-allowed disabled:border-wash-5 disabled:bg-transparent disabled:text-fg-7"
                 >
                   全用 {SHORT[id]}
                 </button>
@@ -170,7 +170,7 @@ export default function MergeView() {
           </div>
         </div>
 
-        <div className="w-[32%] min-w-[300px] border-l border-white/10">
+        <div className="w-[32%] min-w-[300px] border-l border-wash-10">
           <ResultPanel />
         </div>
       </main>
@@ -179,7 +179,7 @@ export default function MergeView() {
         提示只落在这一个位置（合成页没有绘制页那套光标 / 工具状态，
         就不再单独造一个状态栏组件了）
       */}
-      <footer className="flex h-6 shrink-0 items-center border-t border-white/10 bg-[#141821] px-3 text-[10px] text-slate-500">
+      <footer className="flex h-6 shrink-0 items-center border-t border-wash-10 bg-surface-chrome px-3 text-10 text-fg-5">
         {status || '合成都是一次性的像素运算，不动编辑器的撤销记录'}
       </footer>
 
@@ -247,13 +247,13 @@ function SourceCard({ id }: { id: SourceId }) {
       className={
         'shrink-0 rounded-lg border p-2 transition-colors ' +
         (dragging
-          ? 'border-emerald-400/50 bg-emerald-400/[0.05]'
-          : 'border-white/[0.08] bg-[#12161f]')
+          ? 'border-accent-400/50 bg-accent-400/[0.05]'
+          : 'border-wash-8 bg-surface-panel')
       }
     >
       <header className="mb-2 flex items-center justify-between">
-        <span className="flex items-center gap-1.5 text-[11px] font-medium text-slate-300">
-          <span className="grid h-4 w-4 place-items-center rounded bg-white/[0.07] font-mono text-[10px] text-slate-400">
+        <span className="flex items-center gap-1.5 text-11 font-medium text-fg-3">
+          <span className="grid h-4 w-4 place-items-center rounded bg-wash-7 font-mono text-10 text-fg-4">
             {SHORT[id]}
           </span>
           {SOURCE_LABELS[id]}
@@ -264,7 +264,7 @@ function SourceCard({ id }: { id: SourceId }) {
             aria-label={`清除${SOURCE_LABELS[id]}`}
             title="清除这张源图"
             onClick={() => clearSource(id)}
-            className="grid h-5 w-5 place-items-center rounded text-slate-600 transition-colors hover:bg-white/[0.06] hover:text-slate-300"
+            className="grid h-5 w-5 place-items-center rounded text-fg-6 transition-colors hover:bg-wash-6 hover:text-fg-3"
           >
             <X size={12} strokeWidth={2} />
           </button>
@@ -275,10 +275,10 @@ function SourceCard({ id }: { id: SourceId }) {
         <div className="flex items-start gap-2">
           <SkinThumb image={source.image} label={`${SOURCE_LABELS[id]}缩略图`} />
           <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
-            <span className="w-full truncate text-[11px] text-slate-300" title={source.name}>
+            <span className="w-full truncate text-11 text-fg-3" title={source.name}>
               {source.name}
             </span>
-            <span className="font-mono text-[10px] text-slate-600">
+            <span className="font-mono text-10 text-fg-6">
               {source.width}×{source.height}
               {source.legacy && ' · 旧版已补全'}
               {!source.standard && ' · 非标准尺寸'}
@@ -292,16 +292,16 @@ function SourceCard({ id }: { id: SourceId }) {
               type="button"
               aria-label={`更换${SOURCE_LABELS[id]}`}
               onClick={() => inputRef.current?.click()}
-              className="rounded border border-white/[0.07] bg-white/[0.03] px-1.5 py-0.5 text-[10px] text-slate-400 transition-colors hover:border-emerald-400/40 hover:text-emerald-300"
+              className="rounded border border-wash-7 bg-wash-3 px-1.5 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
             >
               换一张
             </button>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-white/[0.12] px-2 py-4">
-          <ImagePlus size={18} strokeWidth={1.6} className="text-slate-700" />
-          <span className="text-center text-[10px] text-slate-600">
+        <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-wash-12 px-2 py-4">
+          <ImagePlus size={18} strokeWidth={1.6} className="text-fg-7" />
+          <span className="text-center text-10 text-fg-6">
             拖入 PNG 到这里，或者
           </span>
           <div className="flex gap-1.5">
@@ -309,7 +309,7 @@ function SourceCard({ id }: { id: SourceId }) {
               type="button"
               aria-label={`选择${SOURCE_LABELS[id]}的 PNG`}
               onClick={() => inputRef.current?.click()}
-              className="rounded border border-white/[0.09] bg-white/[0.04] px-2 py-0.5 text-[10px] text-slate-300 transition-colors hover:border-emerald-400/40 hover:text-emerald-300"
+              className="rounded border border-wash-9 bg-wash-4 px-2 py-0.5 text-10 text-fg-3 transition-colors hover:border-accent-400/40 hover:text-accent-300"
             >
               选择 PNG
             </button>
@@ -318,7 +318,7 @@ function SourceCard({ id }: { id: SourceId }) {
               aria-label={`把当前绘制的皮肤作为${SOURCE_LABELS[id]}`}
               onClick={() => copyCurrentSkin(id)}
               title="把绘制页正在编辑的那张皮肤复制过来"
-              className="rounded border border-white/[0.07] bg-white/[0.02] px-2 py-0.5 text-[10px] text-slate-500 transition-colors hover:border-emerald-400/40 hover:text-emerald-300"
+              className="rounded border border-wash-7 bg-wash-2 px-2 py-0.5 text-10 text-fg-5 transition-colors hover:border-accent-400/40 hover:text-accent-300"
             >
               用当前皮肤
             </button>
@@ -360,12 +360,12 @@ function SkinModelSelect({
   onChange: (model: ModelKind) => void
 }) {
   return (
-    <label className="flex items-center gap-1 text-[10px] text-slate-600">
+    <label className="flex items-center gap-1 text-10 text-fg-6">
       <span>识别为</span>
       <div
         role="group"
         aria-label={`${SOURCE_LABELS[id]}体型识别结果`}
-        className="flex overflow-hidden rounded border border-white/[0.09]"
+        className="flex overflow-hidden rounded border border-wash-9"
       >
         {MODEL_KINDS.map((kind) => (
           <button
@@ -376,10 +376,10 @@ function SkinModelSelect({
             onClick={() => onChange(kind)}
             title={`${MODEL_HINTS[kind]}。这是从贴图自动识别的，认错了可以直接改`}
             className={
-              'px-1.5 py-0.5 text-[10px] transition-colors ' +
+              'px-1.5 py-0.5 text-10 transition-colors ' +
               (value === kind
-                ? 'bg-emerald-400/15 text-emerald-300'
-                : 'bg-white/[0.03] text-slate-300 hover:text-slate-200')
+                ? 'bg-accent-400/15 text-accent-300'
+                : 'bg-wash-3 text-fg-3 hover:text-fg-2')
             }
           >
             {MODEL_LABELS[kind]}
@@ -404,7 +404,7 @@ function ModelToggle({
     <div
       role="group"
       aria-label={ariaLabel}
-      className="flex overflow-hidden rounded border border-white/[0.07]"
+      className="flex overflow-hidden rounded border border-wash-7"
     >
       {MODEL_KINDS.map((kind) => (
         <button
@@ -415,10 +415,10 @@ function ModelToggle({
           onClick={() => onChange(kind)}
           title={`${MODEL_HINTS[kind]}。导出文件名会带这个后缀，上传时请选同一项`}
           className={
-            'px-2 py-0.5 text-[11px] transition-colors ' +
+            'px-2 py-0.5 text-11 transition-colors ' +
             (value === kind
-              ? 'bg-emerald-400/15 text-emerald-300'
-              : 'bg-white/[0.03] text-slate-300 hover:text-slate-200')
+              ? 'bg-accent-400/15 text-accent-300'
+              : 'bg-wash-3 text-fg-3 hover:text-fg-2')
           }
         >
           {MODEL_LABELS[kind]}
@@ -483,7 +483,7 @@ function SkinThumb({
 
   return (
     <span
-      className="shrink-0 rounded border border-white/10"
+      className="shrink-0 rounded border border-wash-10"
       style={{
         backgroundImage:
           'repeating-conic-gradient(#2f3542 0% 25%, #272c37 0% 50%)',
@@ -554,7 +554,7 @@ function PartThumb({
 
   return (
     <span
-      className="rounded border border-white/[0.08]"
+      className="rounded border border-wash-8"
       style={{
         backgroundImage: 'repeating-conic-gradient(#2f3542 0% 25%, #272c37 0% 50%)',
         backgroundSize: '8px 8px',
@@ -587,7 +587,7 @@ function ModelMismatchNote() {
   if (!sourceModelMismatch || !sources.a || !sources.b) return null
 
   return (
-    <p className="mb-2 flex items-start gap-2 rounded-md border border-amber-400/25 bg-amber-400/[0.06] px-2.5 py-2 text-[11px] leading-relaxed text-amber-300/90">
+    <p className="mb-2 flex items-start gap-2 rounded-md border border-warn-400/25 bg-warn-400/[0.06] px-2.5 py-2 text-11 leading-relaxed text-warn-300/90">
       <CircleAlert size={13} strokeWidth={2} className="mt-0.5 shrink-0" />
       <span>
         两张源图的体型不一样：A 是
@@ -613,12 +613,12 @@ function MergeTable() {
     <div className="flex flex-col gap-1">
       {/* 列头：把两张源图的名字放在各自的缩略图列上方 */}
       <div className={ROW_GRID + ' px-1 pb-1'}>
-        <span className="text-[10px] text-slate-600">部件</span>
-        <span className="truncate text-center text-[10px] text-slate-500" title={sources.a?.name}>
+        <span className="text-10 text-fg-6">部件</span>
+        <span className="truncate text-center text-10 text-fg-5" title={sources.a?.name}>
           {sources.a ? sources.a.name : '皮肤 A 未载入'}
         </span>
-        <span className="text-center text-[10px] text-slate-600">取用</span>
-        <span className="truncate text-center text-[10px] text-slate-500" title={sources.b?.name}>
+        <span className="text-center text-10 text-fg-6">取用</span>
+        <span className="truncate text-center text-10 text-fg-5" title={sources.b?.name}>
           {sources.b ? sources.b.name : '皮肤 B 未载入'}
         </span>
         <span />
@@ -631,9 +631,9 @@ function MergeTable() {
         const mixed = pick.base !== pick.overlay
 
         return (
-          <div key={key} className="rounded-md border border-white/[0.06] bg-[#12161f]/60">
+          <div key={key} className="rounded-md border border-wash-6 bg-surface-panel/60">
             <div className={ROW_GRID + ' p-1.5'}>
-              <span className="text-[11px] text-slate-300">{label}</span>
+              <span className="text-11 text-fg-3">{label}</span>
 
               <span className="flex justify-center">
                 <PartThumb source={sources.a} part={key} layer="base" />
@@ -641,7 +641,7 @@ function MergeTable() {
 
               <span className="flex flex-col items-center gap-0.5">
                 {isOpen ? (
-                  <span className="text-[10px] text-slate-600">按层分开</span>
+                  <span className="text-10 text-fg-6">按层分开</span>
                 ) : (
                   <SourcePicker
                     value={mixed ? null : pick.base}
@@ -651,7 +651,7 @@ function MergeTable() {
                     ariaLabel={`${label}整块`}
                   />
                 )}
-                {mixed && !isOpen && <span className="text-[9px] text-amber-400/80">两层不同</span>}
+                {mixed && !isOpen && <span className="text-9 text-warn-400/80">两层不同</span>}
               </span>
 
               <span className="flex justify-center">
@@ -664,7 +664,7 @@ function MergeTable() {
                 aria-label={`${label}：分层选择`}
                 title={isOpen ? '收起，改回整块选' : '展开到第一层 / 第二层'}
                 onClick={() => setExpanded(isOpen ? null : key)}
-                className="grid h-5 w-5 place-items-center rounded text-slate-600 transition-colors hover:bg-white/[0.06] hover:text-slate-300"
+                className="grid h-5 w-5 place-items-center rounded text-fg-6 transition-colors hover:bg-wash-6 hover:text-fg-3"
               >
                 {isOpen ? (
                   <ChevronDown size={13} strokeWidth={2} />
@@ -675,10 +675,10 @@ function MergeTable() {
             </div>
 
             {isOpen && (
-              <div className="flex flex-col gap-1 border-t border-white/[0.05] px-1.5 py-1.5">
+              <div className="flex flex-col gap-1 border-t border-wash-5 px-1.5 py-1.5">
                 {LAYER_IDS.map((layer) => (
                   <div key={layer} className={ROW_GRID}>
-                    <span className="pl-2 text-[10px] text-slate-500">
+                    <span className="pl-2 text-10 text-fg-5">
                       {LAYER_LABELS[layer]}
                     </span>
                     <span className="flex justify-center">
@@ -729,7 +729,7 @@ function SourcePicker({
     <div
       role="group"
       aria-label={ariaLabel}
-      className="flex overflow-hidden rounded border border-white/[0.07]"
+      className="flex overflow-hidden rounded border border-wash-7"
     >
       {SOURCE_IDS.map((id) => {
         const available = id === 'a' ? hasA : hasB
@@ -743,13 +743,13 @@ function SourcePicker({
             aria-label={`${ariaLabel} 用 ${SHORT[id]}`}
             onClick={() => onChange(id)}
             className={
-              (compact ? 'px-2 py-0.5 text-[10px] ' : 'px-2.5 py-0.5 text-[11px] ') +
+              (compact ? 'px-2 py-0.5 text-10 ' : 'px-2.5 py-0.5 text-11 ') +
               'transition-colors ' +
               (!available
-                ? 'cursor-not-allowed bg-transparent text-slate-700'
+                ? 'cursor-not-allowed bg-transparent text-fg-7'
                 : active
-                  ? 'bg-emerald-400/15 text-emerald-300'
-                  : 'bg-white/[0.03] text-slate-500 hover:text-slate-300')
+                  ? 'bg-accent-400/15 text-accent-300'
+                  : 'bg-wash-3 text-fg-5 hover:text-fg-3')
             }
           >
             {SHORT[id]}
@@ -763,9 +763,9 @@ function SourcePicker({
 function EmptyGuide() {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
-      <Combine size={26} strokeWidth={1.4} className="text-slate-700" />
-      <p className="text-[12px] text-slate-500">先载入皮肤 A / B</p>
-      <p className="max-w-[320px] text-[11px] leading-relaxed text-slate-600">
+      <Combine size={26} strokeWidth={1.4} className="text-fg-7" />
+      <p className="text-12 text-fg-5">先载入皮肤 A / B</p>
+      <p className="max-w-[320px] text-11 leading-relaxed text-fg-6">
         常见的用法是「A 的头 + B 的身体」：载入两张图后，这里会列出 6 个部件，
         每一行都能指定用哪一张。
       </p>
@@ -782,13 +782,13 @@ function ResultPanel() {
   const holes = result?.stats.baseHoles ?? 0
 
   return (
-    <div className="flex h-full flex-col bg-[#12161f]">
-      <header className="flex h-8 shrink-0 items-center justify-between border-b border-white/[0.07] px-3">
-        <div className="flex items-center gap-1.5 text-slate-400">
+    <div className="flex h-full flex-col bg-surface-panel">
+      <header className="flex h-8 shrink-0 items-center justify-between border-b border-wash-7 px-3">
+        <div className="flex items-center gap-1.5 text-fg-4">
           <Sparkles size={13} strokeWidth={2} />
-          <span className="text-[11px] font-medium tracking-wide">合成结果</span>
+          <span className="text-11 font-medium tracking-wide">合成结果</span>
         </div>
-        <span className="font-mono text-[10px] text-slate-600">
+        <span className="font-mono text-10 text-fg-6">
           {result
             ? `${result.layers === 'double' ? '双层' : '单层'} · ${MODEL_LABELS[outputModel]}`
             : '等待源图'}
@@ -806,17 +806,17 @@ function ResultPanel() {
             bottomHint="拖拽旋转 · 滚轮缩放"
           />
         ) : (
-          <div className="grid h-full place-items-center px-4 text-center text-[11px] text-slate-600">
+          <div className="grid h-full place-items-center px-4 text-center text-11 text-fg-6">
             载入源图后这里会出现合成结果的 3D 预览
           </div>
         )}
       </div>
 
-      <div className="shrink-0 space-y-1.5 border-t border-white/[0.07] p-2">
+      <div className="shrink-0 space-y-1.5 border-t border-wash-7 p-2">
         {result?.notes.map((note, i) => (
           <p
             key={`note-${i}`}
-            className="flex items-start gap-1.5 rounded border border-amber-400/20 bg-amber-400/[0.06] px-2 py-1 text-[10px] leading-relaxed text-amber-300/90"
+            className="flex items-start gap-1.5 rounded border border-warn-400/20 bg-warn-400/[0.06] px-2 py-1 text-10 leading-relaxed text-warn-300/90"
           >
             <TriangleAlert size={11} strokeWidth={2} className="mt-0.5 shrink-0" />
             {note}
@@ -829,7 +829,7 @@ function ResultPanel() {
           从 B 拿过来的那一层，在 B 里可能本来就是空的。
         */}
         {holes > 0 && (
-          <p className="flex items-start gap-1.5 rounded border border-rose-400/25 bg-rose-400/[0.07] px-2 py-1 text-[10px] leading-relaxed text-rose-300">
+          <p className="flex items-start gap-1.5 rounded border border-danger-400/25 bg-danger-400/[0.07] px-2 py-1 text-10 leading-relaxed text-danger-300">
             <TriangleAlert size={11} strokeWidth={2} className="mt-0.5 shrink-0" />
             第一层有 {holes} 个透明像素，游戏里会显示成黑色。换一张源图，或到绘制页用橡皮擦成黑色
           </p>
@@ -839,7 +839,7 @@ function ResultPanel() {
           导出已上移顶栏（与绘制页同位置）。这里只保留文件名预览，
           让用户在点导出前先看到最终落盘名（含体型后缀）。
         */}
-        <p className="truncate font-mono text-[10px] text-slate-600" title={`${mergedName}-${MODEL_LABELS[outputModel]}.png`}>
+        <p className="truncate font-mono text-10 text-fg-6" title={`${mergedName}-${MODEL_LABELS[outputModel]}.png`}>
           {ready ? `${mergedName}-${MODEL_LABELS[outputModel]}.png` : '—'}
         </p>
       </div>

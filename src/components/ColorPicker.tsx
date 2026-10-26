@@ -168,7 +168,7 @@ export default function ColorPicker({
         onPointerMove={moveDrag}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        className="relative h-28 w-full cursor-crosshair touch-none select-none rounded-md ring-1 ring-white/15"
+        className="relative h-28 w-full cursor-crosshair touch-none select-none rounded-md ring-1 ring-wash-15"
         style={{ backgroundColor: hueHex }}
       >
         <div
@@ -192,7 +192,7 @@ export default function ColorPicker({
         onPointerMove={moveDrag}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        className="relative h-3.5 w-full cursor-pointer touch-none select-none rounded-full ring-1 ring-white/15"
+        className="relative h-3.5 w-full cursor-pointer touch-none select-none rounded-full ring-1 ring-wash-15"
         style={{
           background:
             'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)',
@@ -207,7 +207,7 @@ export default function ColorPicker({
       {/* 当前色 + HEX 输入 */}
       <div className="flex items-center gap-2">
         <span
-          className="h-7 w-9 shrink-0 rounded ring-1 ring-white/20"
+          className="h-7 w-9 shrink-0 rounded ring-1 ring-wash-20"
           style={{ backgroundColor: hex }}
           title={hex}
         />
@@ -230,11 +230,11 @@ export default function ColorPicker({
             const normalized = normalizeHex(hexDraft)
             setHexDraft(normalized ?? hex)
           }}
-          className="w-full min-w-0 rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-1.5 font-mono text-[11px] text-slate-300 outline-none focus:border-emerald-400/40"
+          className="w-full min-w-0 rounded-md border border-wash-7 bg-wash-3 px-2 py-1.5 font-mono text-11 text-fg-3 outline-none focus:border-accent-400/40"
         />
       </div>
 
-      <p className="font-mono text-[10px] text-slate-600">
+      <p className="font-mono text-10 text-fg-6">
         RGB {r}, {g}, {b}
       </p>
     </div>

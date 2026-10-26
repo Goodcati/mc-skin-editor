@@ -370,10 +370,10 @@ export default function SkinCanvas2D() {
     : '整张皮肤（未选中部位）'
 
   return (
-    <div className="flex h-full w-full flex-col bg-[#12161f]">
-      <header className="flex h-8 shrink-0 items-center justify-between border-b border-white/[0.07] px-3">
+    <div className="flex h-full w-full flex-col bg-surface-panel">
+      <header className="flex h-8 shrink-0 items-center justify-between border-b border-wash-7 px-3">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="truncate text-[11px] font-medium tracking-wide text-slate-300">
+          <span className="truncate text-11 font-medium tracking-wide text-fg-3">
             {targetLabel}
           </span>
           {/*
@@ -381,7 +381,7 @@ export default function SkinCanvas2D() {
             未选中时取景框就是整张贴图，再报一次 64×64 只是把顶栏的话说第二遍。
           */}
           {selectedPart && (
-            <span className="shrink-0 font-mono text-[10px] text-slate-600">
+            <span className="shrink-0 font-mono text-10 text-fg-6">
               {viewW}×{viewH} px
             </span>
           )}
@@ -389,7 +389,7 @@ export default function SkinCanvas2D() {
 
         <div className="flex shrink-0 items-center gap-1.5">
           {selectedPart && (
-            <div className="flex overflow-hidden rounded border border-white/[0.07]">
+            <div className="flex overflow-hidden rounded border border-wash-7">
               {LAYER_IDS.map((id) => (
                 <button
                   key={id}
@@ -397,10 +397,10 @@ export default function SkinCanvas2D() {
                   onClick={() => setLayer(id)}
                   title={`编辑${LAYER_LABELS[id]}`}
                   className={
-                    'px-2 py-0.5 text-[10px] transition-colors ' +
+                    'px-2 py-0.5 text-10 transition-colors ' +
                     (id === layer
-                      ? 'bg-emerald-400/15 text-emerald-300'
-                      : 'bg-white/[0.03] text-slate-500 hover:text-slate-300')
+                      ? 'bg-accent-400/15 text-accent-300'
+                      : 'bg-wash-3 text-fg-5 hover:text-fg-3')
                   }
                 >
                   {LAYER_LABELS[id]}
@@ -416,8 +416,8 @@ export default function SkinCanvas2D() {
             className={
               'rounded border p-1 transition-colors ' +
               (showGrid
-                ? 'border-emerald-400/40 bg-emerald-400/12 text-emerald-300'
-                : 'border-white/[0.07] bg-white/[0.03] text-slate-500 hover:text-slate-300')
+                ? 'border-accent-400/40 bg-accent-400/12 text-accent-300'
+                : 'border-wash-7 bg-wash-3 text-fg-5 hover:text-fg-3')
             }
           >
             <Grid3x3 size={13} strokeWidth={2} />
@@ -425,7 +425,7 @@ export default function SkinCanvas2D() {
         </div>
       </header>
 
-      <div ref={hostRef} className="thin-scroll min-h-0 flex-1 overflow-auto bg-[#0d1016]">
+      <div ref={hostRef} className="thin-scroll min-h-0 flex-1 overflow-auto bg-surface-canvas">
         {/* grid + place-items-center：内容比容器小时居中，比容器大时正常出滚动条 */}
         <div className="grid h-max min-h-full w-max min-w-full box-border place-items-center">
           <canvas
@@ -439,7 +439,7 @@ export default function SkinCanvas2D() {
             onPointerCancel={endStroke}
             onPointerLeave={handlePointerLeave}
             onContextMenu={(e) => e.preventDefault()}
-            className={`block rounded-sm ring-1 ring-white/15 touch-none select-none ${cursorClass}`}
+            className={`block rounded-sm ring-1 ring-wash-15 touch-none select-none ${cursorClass}`}
             style={{ width: `${displayW}px`, height: `${displayH}px` }}
           />
         </div>

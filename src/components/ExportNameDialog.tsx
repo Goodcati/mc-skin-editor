@@ -68,15 +68,15 @@ export default function ExportNameDialog({
         role="dialog"
         aria-modal="true"
         aria-label="给皮肤命名"
-        className="w-[360px] max-w-full rounded-xl border border-white/10 bg-[#151a24] p-4 shadow-2xl"
+        className="w-[360px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-4 shadow-2xl"
       >
         <header className="flex items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-sky-400/15 text-sky-300">
+          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-info-400/15 text-info-300">
             <Tag size={15} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 className="text-[13px] font-semibold text-slate-100">给皮肤命名</h2>
-            <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500">
+            <h2 className="text-13 font-semibold text-fg-1">给皮肤命名</h2>
+            <p className="mt-0.5 text-11 leading-relaxed text-fg-5">
               文件名会带上「绘制- / 合成-」前缀和体型后缀，这里只填名字本身
             </p>
           </div>
@@ -85,7 +85,7 @@ export default function ExportNameDialog({
             aria-label="取消命名"
             title="取消导出"
             onClick={onCancel}
-            className="grid h-6 w-6 shrink-0 place-items-center rounded text-slate-600 transition-colors hover:bg-white/[0.06] hover:text-slate-300"
+            className="grid h-6 w-6 shrink-0 place-items-center rounded text-fg-6 transition-colors hover:bg-wash-6 hover:text-fg-3"
           >
             <X size={13} strokeWidth={2} />
           </button>
@@ -107,19 +107,19 @@ export default function ExportNameDialog({
             spellCheck={false}
             autoComplete="off"
             aria-label="皮肤名称"
-            className="w-full rounded-md border border-white/[0.09] bg-[#0d1119] px-2.5 py-2 text-[13px] text-slate-200 placeholder:text-slate-600 outline-none transition-colors focus:border-emerald-400/50"
+            className="w-full rounded-md border border-wash-9 bg-surface-field px-2.5 py-2 text-13 text-fg-2 placeholder:text-fg-6 outline-none transition-colors focus:border-accent-400/50"
           />
           <div className="mt-3 grid grid-cols-2 gap-2">
             <button
               type="submit"
-              className="flex items-center justify-center rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1.5 text-[11px] text-emerald-300 transition-colors hover:border-emerald-400/55"
+              className="flex items-center justify-center rounded-md border border-accent-400/30 bg-accent-400/10 px-2 py-1.5 text-11 text-accent-300 transition-colors hover:border-accent-400/55"
             >
               确认导出
             </button>
             <button
               type="button"
               onClick={onCancel}
-              className="flex items-center justify-center rounded-md border border-white/[0.09] bg-white/[0.04] px-2 py-1.5 text-[11px] text-slate-300 transition-colors hover:border-white/20"
+              className="flex items-center justify-center rounded-md border border-wash-9 bg-wash-4 px-2 py-1.5 text-11 text-fg-3 transition-colors hover:border-wash-20"
             >
               取消
             </button>

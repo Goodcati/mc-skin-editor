@@ -1,0 +1,103 @@
+/**
+ * 全站唯一的视觉 token 源。
+ *
+ * 规矩：**组件里不许再写字面色值/字号/圆角**，一律从这里取。
+ * 改配色只改这个文件，不要回头改组件。
+ *
+ * ── M1 阶段的设计约束（重要，别误读）──
+ * 这里的每个 token 值都**逐字等于**改造前组件里直接写的那个值，目的是让
+ * 「token 化」这一步产出**零视觉变化**，从而能证明重构没改坏东西。
+ * 因此 token 的档位数目前**多于**设计目标（8 个表面 / 7 档文字 / 14 档白膜），
+ * 那是因为旧代码里本来就有 8 个几乎一样的黑、7 档灰字。
+ *
+ * M2 阶段的任务就是把这些档位**收敛**到目标档位（表面 4 / 文字 4 / 边框 3），
+ * 那一步只改本文件的值即可，不必再动组件。
+ *
+ * 色值形态说明：slate/emerald 等直接写成 oklch()，不写 var(--color-slate-400)。
+ * 因为 Tailwind v4 对主题变量是按使用情况按需输出的 —— 组件不再直接写 slate-400 之后，
+ * var(--color-slate-400) 可能根本不会被输出，引用它就等于引用一个空值。
+ * 下面这些 oklch 数值是从改造前的构建产物 dist/assets/*.css 里逐字抄出来的。
+ */
+@theme {
+  /* ═══════════ 表面（背景）8 档 ═══════════
+     M2 目标：收敛到 4 档 —— app / panel / raised / overlay */
+  --color-surface-app: #0f1115; /* 视图根背景 */
+  --color-surface-chrome: #141821; /* 顶栏 / 状态栏 */
+  --color-surface-panel: #12161f; /* 面板、工具栏 */
+  --color-surface-canvas: #0d1016; /* 画布凹陷底 */
+  --color-surface-field: #0d1119; /* 输入框 */
+  --color-surface-dialog: #151a24; /* 弹框 */
+  --color-surface-chip: #1a202b; /* 悬浮小按钮 */
+  --color-surface-inset: #0b0e13; /* 缩略图 / 空槽底 */
+
+  /* ═══════════ 文字 7 档 ═══════════
+     M2 目标：收敛到 4 档 —— primary / secondary / tertiary / disabled */
+  /* body 的基础文字色。刻意写成 #e2e8f0 而不是 var(--color-fg-2)：
+     fg-2 是 oklch 写法，虽然观感等价，但会让继承色的计算值序列化形式改变，
+     这样「像素/样式零差异」就无法自证了。 */
+  --color-fg-base: #e2e8f0;
+  --color-fg-1: oklch(96.8% 0.007 247.896); /* slate-100 最亮 */
+  --color-fg-2: oklch(92.9% 0.013 255.508); /* slate-200 正文 */
+  --color-fg-3: oklch(86.9% 0.022 252.894); /* slate-300 */
+  --color-fg-4: oklch(70.4% 0.04 256.788); /* slate-400 次要 */
+  --color-fg-5: oklch(55.4% 0.046 257.417); /* slate-500 三级 */
+  --color-fg-6: oklch(44.6% 0.043 257.281); /* slate-600 placeholder */
+  --color-fg-7: oklch(37.2% 0.044 257.287); /* slate-700 最暗 */
+
+  /* ═══════════ 白膜（白色叠加，用于边框/分隔/悬浮层）═══════════
+     数值 = 覆盖在底色上的白色百分比。M2 目标：收敛到 3 档 hairline/normal/strong */
+  --color-wash-2: color-mix(in oklab, #fff 2%, transparent);
+  --color-wash-3: color-mix(in oklab, #fff 3%, transparent);
+  --color-wash-4: color-mix(in oklab, #fff 4%, transparent);
+  --color-wash-5: color-mix(in oklab, #fff 5%, transparent);
+  --color-wash-6: color-mix(in oklab, #fff 6%, transparent);
+  --color-wash-7: color-mix(in oklab, #fff 7%, transparent);
+  --color-wash-8: color-mix(in oklab, #fff 8%, transparent);
+  --color-wash-9: color-mix(in oklab, #fff 9%, transparent);
+  --color-wash-10: color-mix(in oklab, #fff 10%, transparent);
+  --color-wash-12: color-mix(in oklab, #fff 12%, transparent);
+  --color-wash-14: color-mix(in oklab, #fff 14%, transparent);
+  --color-wash-15: color-mix(in oklab, #fff 15%, transparent);
+  --color-wash-20: color-mix(in oklab, #fff 20%, transparent);
+  --color-wash-45: color-mix(in oklab, #fff 45%, transparent);
+
+  /* ═══════════ 语义色 ═══════════ */
+  /* 强调（主操作、选中态） */
+  --color-accent-300: oklch(84.5% 0.143 164.978);
+  --color-accent-400: oklch(76.5% 0.177 163.223);
+  --color-accent-500: oklch(69.6% 0.17 162.48);
+  /* 危险（删除、失败） */
+  --color-danger-300: oklch(81% 0.117 11.638);
+  --color-danger-400: oklch(71.2% 0.194 13.428);
+  /* 提醒（覆盖、注意） */
+  --color-warn-300: oklch(87.9% 0.169 91.605);
+  --color-warn-400: oklch(82.8% 0.189 84.429);
+  /* 信息（说明、次要标记） */
+  --color-info-200: oklch(90.1% 0.058 230.902);
+  --color-info-300: oklch(82.8% 0.111 230.318);
+  --color-info-400: oklch(74.6% 0.16 232.661);
+  /* 另类标记（合成页源 B 的区分色） */
+  --color-alt-500: oklch(71.5% 0.143 215.221);
+
+  /* ═══════════ 字号 7 档 ═══════════
+     M2 目标：收敛到 6 档 —— 10 / 11 / 12 / 13 / 15 / 18（9 归入 10）
+     只设 font-size，不设 --text-*--line-height，保持与旧写法 text-[Npx] 行为一致 */
+  --text-9: 9px;
+  --text-10: 10px;
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-15: 15px;
+  --text-18: 18px;
+
+  /* ═══════════ 圆角 3 档（M2 启用）═══════════ */
+  --radius-control: 4px; /* 按钮、输入框、小卡 */
+  --radius-card: 8px; /* 卡片、面板 */
+  --radius-overlay: 12px; /* 弹框 */
+
+  /* ═══════════ 间距 4 档（M2 启用）═══════════ */
+  --spacing-tight: 4px;
+  --spacing-normal: 8px;
+  --spacing-loose: 12px;
+  --spacing-section: 16px;
+}
