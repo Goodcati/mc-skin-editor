@@ -21,13 +21,13 @@
 @theme {
   /* ═══════════ 表面（背景）8 档 ═══════════
      M2 目标：收敛到 4 档 —— app / panel / raised / overlay */
-  --color-surface-app: #0f1115; /* 视图根背景 */
-  --color-surface-chrome: #141821; /* 顶栏 / 状态栏 */
+  --color-surface-app: #0b0e13; /* 视图根背景 */
+  --color-surface-chrome: #171d28; /* 顶栏 / 状态栏 */
   --color-surface-panel: #12161f; /* 面板、工具栏 */
-  --color-surface-canvas: #0d1016; /* 画布凹陷底 */
-  --color-surface-field: #0d1119; /* 输入框 */
-  --color-surface-dialog: #151a24; /* 弹框 */
-  --color-surface-chip: #1a202b; /* 悬浮小按钮 */
+  --color-surface-canvas: #0b0e13; /* 画布凹陷底 */
+  --color-surface-field: #0b0e13; /* 输入框 */
+  --color-surface-dialog: #1f2735; /* 弹框 */
+  --color-surface-chip: #1f2735; /* 悬浮小按钮 */
   --color-surface-inset: #0b0e13; /* 缩略图 / 空槽底 */
 
   /* ═══════════ 文字 7 档 ═══════════
@@ -36,30 +36,30 @@
      fg-2 是 oklch 写法，虽然观感等价，但会让继承色的计算值序列化形式改变，
      这样「像素/样式零差异」就无法自证了。 */
   --color-fg-base: #e2e8f0;
-  --color-fg-1: oklch(96.8% 0.007 247.896); /* slate-100 最亮 */
-  --color-fg-2: oklch(92.9% 0.013 255.508); /* slate-200 正文 */
-  --color-fg-3: oklch(86.9% 0.022 252.894); /* slate-300 */
-  --color-fg-4: oklch(70.4% 0.04 256.788); /* slate-400 次要 */
-  --color-fg-5: oklch(55.4% 0.046 257.417); /* slate-500 三级 */
-  --color-fg-6: oklch(44.6% 0.043 257.281); /* slate-600 placeholder */
-  --color-fg-7: oklch(37.2% 0.044 257.287); /* slate-700 最暗 */
+  --color-fg-1: oklch(93% 0.013 255.508); /* slate-100 最亮 */
+  --color-fg-2: oklch(93% 0.013 255.508); /* slate-200 正文 */
+  --color-fg-3: oklch(80% 0.025 255); /* slate-300 */
+  --color-fg-4: oklch(80% 0.025 255); /* slate-400 次要 */
+  --color-fg-5: oklch(64% 0.035 257); /* slate-500 三级 */
+  --color-fg-6: oklch(64% 0.035 257); /* slate-600 placeholder */
+  --color-fg-7: oklch(48% 0.035 257); /* slate-700 最暗 */
 
   /* ═══════════ 白膜（白色叠加，用于边框/分隔/悬浮层）═══════════
      数值 = 覆盖在底色上的白色百分比。M2 目标：收敛到 3 档 hairline/normal/strong */
-  --color-wash-2: color-mix(in oklab, #fff 2%, transparent);
-  --color-wash-3: color-mix(in oklab, #fff 3%, transparent);
+  --color-wash-2: color-mix(in oklab, #fff 4%, transparent);
+  --color-wash-3: color-mix(in oklab, #fff 4%, transparent);
   --color-wash-4: color-mix(in oklab, #fff 4%, transparent);
-  --color-wash-5: color-mix(in oklab, #fff 5%, transparent);
-  --color-wash-6: color-mix(in oklab, #fff 6%, transparent);
-  --color-wash-7: color-mix(in oklab, #fff 7%, transparent);
-  --color-wash-8: color-mix(in oklab, #fff 8%, transparent);
-  --color-wash-9: color-mix(in oklab, #fff 9%, transparent);
-  --color-wash-10: color-mix(in oklab, #fff 10%, transparent);
-  --color-wash-12: color-mix(in oklab, #fff 12%, transparent);
-  --color-wash-14: color-mix(in oklab, #fff 14%, transparent);
-  --color-wash-15: color-mix(in oklab, #fff 15%, transparent);
+  --color-wash-5: color-mix(in oklab, #fff 4%, transparent);
+  --color-wash-6: color-mix(in oklab, #fff 4%, transparent);
+  --color-wash-7: color-mix(in oklab, #fff 11%, transparent);
+  --color-wash-8: color-mix(in oklab, #fff 11%, transparent);
+  --color-wash-9: color-mix(in oklab, #fff 11%, transparent);
+  --color-wash-10: color-mix(in oklab, #fff 11%, transparent);
+  --color-wash-12: color-mix(in oklab, #fff 11%, transparent);
+  --color-wash-14: color-mix(in oklab, #fff 20%, transparent);
+  --color-wash-15: color-mix(in oklab, #fff 20%, transparent);
   --color-wash-20: color-mix(in oklab, #fff 20%, transparent);
-  --color-wash-45: color-mix(in oklab, #fff 45%, transparent);
+  --color-wash-45: color-mix(in oklab, #fff 20%, transparent);
 
   /* ═══════════ 语义色 ═══════════ */
   /* 强调（主操作、选中态） */

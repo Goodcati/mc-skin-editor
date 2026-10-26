@@ -14,7 +14,8 @@
     "verify": "npm run verify:export && npm run verify:head && npm run verify:works",
     "verify:export": "tsx scripts/verify-export.mts",
     "verify:head": "tsx scripts/verify-head.mts",
-    "verify:works": "tsx scripts/verify-works.mts"
+    "verify:works": "tsx scripts/verify-works.mts",
+    "verify:contrast": "tsx scripts/contrast.mts"
   },
   "dependencies": {
     "lucide-react": "^1.53.0",
