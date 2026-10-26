@@ -496,7 +496,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   /** 按偏好载入「首次打开 / 新建」的起点皮肤；空画布返回已完成。 */
   const loadStarterSkin = useCallback(() => {
     const base = readStarter()
-    if (base === 'white') return loadSkinFromUrl(createWhiteSkinDataUrl(), '纯白皮肤')
+    if (base === 'white') return loadSkinFromUrl(createWhiteSkinDataUrl(), '纯白皮肤', false, 'wide')
     if (base === 'sample') return loadSkinFromUrl(BUILTIN_SKIN_URL, '示例·宽型')
     return Promise.resolve()
   }, [loadSkinFromUrl])
@@ -507,7 +507,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       clearSnapshot()
       // 纯白 / 示例都走 loadSkinFromUrl（与导入同一条解码路径），空画布则什么都不做
       if (base === 'white') {
-        void loadSkinFromUrl(createWhiteSkinDataUrl(), '纯白皮肤').catch(() => flash('纯白皮肤生成失败'))
+        void loadSkinFromUrl(createWhiteSkinDataUrl(), '纯白皮肤', false, 'wide').catch(() => flash('纯白皮肤生成失败'))
       } else if (base === 'sample') {
         void loadStarterSkin().catch(() => flash('内置示例皮肤加载失败，可手动导入'))
       }
