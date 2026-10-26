@@ -25,7 +25,7 @@ const SRC = join(ROOT, 'src')
 
 /** 已知未迁、且本轮不归我改的文件 */
 const ALLOW: Record<string, string> = {
-  'src/views/Lobby.tsx': '离线下载链归机主，残留 17 处旧间距 + 1 个 text-9',
+  // （已清空）Lobby.tsx 已于 2026-10-26 并入统一间距与字号，不再豁免
 }
 
 const SPACING_PREFIX = [
