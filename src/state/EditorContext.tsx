@@ -39,6 +39,8 @@ const RECENT_COLORS_KEY = 'mc-skin-editor/recent-colors/v1'
  * （只重写 index.html / CSS 里的引用）——写死 `/skins/sample-wide.png` 在线上会 404。
  * 实测：子路径下 `/skins/...` → 404，`/mc-skin-editor/skins/...` → 200。
  */
+import { createWhiteSkinDataUrl, readStarter, type StarterBase } from '../lib/starterSkin'
+
 const BUILTIN_SKIN_URL = `${import.meta.env.BASE_URL}skins/sample-wide.png`
 
 /**
@@ -137,7 +139,7 @@ export interface EditorContextValue {
   adoptSkin: (source: HTMLCanvasElement, name: string, model: ModelKind) => void
   resetSkin: () => void
   /** 大厅「绘制=新建」：清空画布并清掉草稿，进入一张全新空画布 */
-  startNewSkin: () => void
+  startNewSkin: (base?: StarterBase) => void
   /** 从作品库恢复一件绘制作品（画布 + 名称 + 体型） */
   loadWork: (work: WorkItem) => Promise<void>
 
@@ -491,10 +493,27 @@ export function EditorProvider({ children }: { children: ReactNode }) {
    * 是双保险：即便 resetSkin 内部的 saveNow('auto') 或随后防抖重排的自动保存
    * 再触发一次，也会因为画布仍空而落到 clearSnapshot，不会复活空草稿。
    */
-  const startNewSkin = useCallback(() => {
-    resetSkin()
-    clearSnapshot()
-  }, [resetSkin])
+  /** 按偏好载入「首次打开 / 新建」的起点皮肤；空画布返回已完成。 */
+  const loadStarterSkin = useCallback(() => {
+    const base = readStarter()
+    if (base === 'white') return loadSkinFromUrl(createWhiteSkinDataUrl(), '纯白皮肤')
+    if (base === 'sample') return loadSkinFromUrl(BUILTIN_SKIN_URL, '示例·宽型')
+    return Promise.resolve()
+  }, [loadSkinFromUrl])
+
+  const startNewSkin = useCallback(
+    (base: StarterBase = readStarter()) => {
+      resetSkin()
+      clearSnapshot()
+      // 纯白 / 示例都走 loadSkinFromUrl（与导入同一条解码路径），空画布则什么都不做
+      if (base === 'white') {
+        void loadSkinFromUrl(createWhiteSkinDataUrl(), '纯白皮肤').catch(() => flash('纯白皮肤生成失败'))
+      } else if (base === 'sample') {
+        void loadStarterSkin().catch(() => flash('内置示例皮肤加载失败，可手动导入'))
+      }
+    },
+    [resetSkin, loadStarterSkin, loadSkinFromUrl, flash],
+  )
 
   /** 从作品库恢复一件绘制作品：dataUrl 走与导入完全相同的解码路径 */
   const loadWork = useCallback(
@@ -538,14 +557,14 @@ export function EditorProvider({ children }: { children: ReactNode }) {
           // 同时退回内置示例皮肤，绝不把用户卡在空白画布上
           clearSnapshot()
           setLastSavedAt(null)
-          loadSkinFromUrl(BUILTIN_SKIN_URL, '示例·宽型').catch(() => {
+          loadStarterSkin().catch(() => {
             flash('内置示例皮肤加载失败，可手动导入')
           })
         })
       return
     }
 
-    loadSkinFromUrl(BUILTIN_SKIN_URL, '示例·宽型').catch(() => {
+    loadStarterSkin().catch(() => {
       flash('内置示例皮肤加载失败，可手动导入')
     })
   }, [loadSkinFromUrl, flash])

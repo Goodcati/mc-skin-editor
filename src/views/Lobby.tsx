@@ -17,6 +17,7 @@ import {
 import type { WorkItem } from '../lib/works'
 import { useEditor } from '../state/EditorContext'
 import { useMerge } from '../state/MergeContext'
+import { STARTER_OPTIONS, readStarter, writeStarter, type StarterBase } from '../lib/starterSkin'
 
 /**
  * 大厅：工具的入口页。
@@ -39,6 +40,9 @@ export default function Lobby() {
 
   // 作品列表用 state 持有：删除后要立刻刷新，不能每次渲染都同步读 localStorage
   const [works, setWorks] = useState<WorkItem[]>(() => readWorks().works)
+
+  // 新皮肤起点偏好：只影响「首次打开」与「新建」，不改变当前这张
+  const [starter, setStarter] = useState<StarterBase>(() => readStarter())
 
   // 导入备份用的隐藏文件选择器
   const backupInputRef = useRef<HTMLInputElement>(null)
@@ -132,18 +136,39 @@ export default function Lobby() {
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-surface-app text-fg-2">
       {/* 顶栏：左品牌。品牌块与绘制页顶栏保持一致，切页时不会跳位 */}
-      <header className="flex h-11 shrink-0 items-center border-b border-wash-10 bg-surface-chrome px-4">
+      <header className="flex h-11 shrink-0 items-center border-b border-wash-10 bg-surface-chrome px-3">
         <div className="flex items-center gap-2">
           <span className="grid h-6 w-6 place-items-center rounded bg-accent-400/15 text-accent-300">
             <Box size={15} strokeWidth={2} />
           </span>
           <h1 className="text-13 font-semibold tracking-wide">Minecraft 皮肤编辑器</h1>
           <span
-            className="rounded bg-wash-6 px-1.5 py-0.5 font-mono text-10 text-fg-4"
+            className="rounded bg-wash-6 px-1.5 py-1 font-mono text-10 text-fg-4"
             title="版本号：主版本.迭代.补丁"
           >
             {APP_VERSION}
           </span>
+        </div>
+        {/* 新皮肤起点：只影响「首次打开」与「新建」，不改变当前这张 */}
+        <div className="ml-auto flex items-center gap-1">
+          <span className="text-10 text-fg-6">新皮肤</span>
+          <div className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 p-1">
+            {STARTER_OPTIONS.map((option) => (
+              <button
+                key={option.base}
+                type="button"
+                title={option.title}
+                onClick={() => {
+                  writeStarter(option.base)
+                  setStarter(option.base)
+                  flash(`新皮肤起点：${option.label}`)
+                }}
+                className={'rounded px-1.5 py-1 text-10 transition-colors ' + (starter === option.base ? 'bg-accent-400/15 text-accent-300' : 'text-fg-5 hover:text-fg-2')}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -166,7 +191,7 @@ export default function Lobby() {
       </main>
 
       {/* 底部通栏：作品库（「我的皮肤」）。空态 + 真实列表 */}
-      <footer className="flex h-[104px] shrink-0 flex-col border-t border-wash-10 bg-surface-chrome px-4 py-2">
+      <footer className="flex h-[104px] shrink-0 flex-col border-t border-wash-10 bg-surface-chrome px-3 py-2">
         <div className="flex shrink-0 items-center justify-between">
           <span className="text-11 font-medium tracking-wide text-fg-4">我的皮肤</span>
           <div className="flex items-center gap-1.5">
@@ -174,7 +199,7 @@ export default function Lobby() {
               type="button"
               onClick={exportBackup}
               title="把作品库导出成 JSON 文件，可备份、可换机器恢复"
-              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
+              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-1 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
             >
               <Download size={11} strokeWidth={2} />
               导出备份
@@ -183,7 +208,7 @@ export default function Lobby() {
               type="button"
               onClick={() => backupInputRef.current?.click()}
               title="从 JSON 备份文件恢复作品（只新增，不覆盖现有作品）"
-              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
+              className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-1 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
             >
               <Upload size={11} strokeWidth={2} />
               导入备份
@@ -198,7 +223,7 @@ export default function Lobby() {
                 href={`${import.meta.env.BASE_URL}download/mse-offline.zip`}
                 download
                 title="下载离线版：解压后双击 index.html，不联网也能用"
-                className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-0.5 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
+                className="flex items-center gap-1 rounded border border-wash-7 bg-wash-3 px-1.5 py-1 text-10 text-fg-4 transition-colors hover:border-accent-400/40 hover:text-accent-300"
               >
                 <Download size={11} strokeWidth={2} />
                 下载离线版
@@ -258,7 +283,7 @@ export default function Lobby() {
                 <span className="w-full truncate text-center text-11 text-fg-3">
                   {work.name}
                 </span>
-                <span className="text-9 text-fg-6">
+                <span className="text-10 text-fg-6">
                   {work.kind === 'draw' ? '绘制' : '合成'} · {describeAgo(work.updatedAt)}
                 </span>
               </button>
@@ -369,7 +394,7 @@ function ConfirmNewDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-4"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-3"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onCancel()
       }}
@@ -378,15 +403,15 @@ function ConfirmNewDialog({
         role="dialog"
         aria-modal="true"
         aria-label="继续还是新建"
-        className="w-[360px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-4 shadow-2xl"
+        className="w-[360px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-3 shadow-2xl"
       >
-        <header className="flex items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-warn-400/15 text-warn-300">
+        <header className="flex items-start gap-2">
+          <span className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-warn-400/15 text-warn-300">
             <Paintbrush size={15} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
             <h2 className="text-13 font-semibold text-fg-1">有未完成的绘制</h2>
-            <p className="mt-0.5 text-11 leading-relaxed text-fg-5">
+            <p className="mt-1 text-11 leading-relaxed text-fg-5">
               上次的皮肤还没导出。可以接着画，也可以另起一张新的。
             </p>
           </div>
@@ -434,7 +459,7 @@ function ConfirmDeleteDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-4"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-3"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onCancel()
       }}
@@ -443,15 +468,15 @@ function ConfirmDeleteDialog({
         role="dialog"
         aria-modal="true"
         aria-label="删除作品确认"
-        className="w-[340px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-4 shadow-2xl"
+        className="w-[340px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-3 shadow-2xl"
       >
-        <header className="flex items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-danger-400/15 text-danger-300">
+        <header className="flex items-start gap-2">
+          <span className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-danger-400/15 text-danger-300">
             <Trash2 size={15} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
             <h2 className="text-13 font-semibold text-fg-1">删除「{name}」？</h2>
-            <p className="mt-0.5 text-11 leading-relaxed text-fg-5">
+            <p className="mt-1 text-11 leading-relaxed text-fg-5">
               删除后不可恢复，会从作品库里彻底移除。
             </p>
           </div>
@@ -514,7 +539,7 @@ function CurrentSkin() {
 function MergeSketch() {
   const patch = 'h-12 w-7 rounded-sm border border-wash-9'
   return (
-    <span className="flex items-center gap-2.5">
+    <span className="flex items-center gap-2">
       <span className={`${patch} bg-alt-500/20`} />
       <span className={`${patch} bg-accent-500/20`} />
       <MoveRight size={14} strokeWidth={2} className="text-fg-7" />
