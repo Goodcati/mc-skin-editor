@@ -153,21 +153,6 @@ export default function SkinViewport({
     viewer.controls.enablePan = false
     viewerRef.current = viewer
 
-    // 未填充像素（alpha = 0）要像游戏里那样「看得穿」，而不是被画成黑色：
-    // 关混合 + alphaTest 直接丢弃透明像素。我们的导出不变量保证 alpha 只有 0/255，
-    // 所以 0.5 这条阈值等价于「非透明才画」。
-    // 材质在 SkinObject 里是私有的，遍历子网格统一设置，不碰内部字段
-    viewer.playerObject.skin.traverse((object) => {
-      const holder = object as unknown as {
-        material?: { transparent: boolean; alphaTest: number; needsUpdate: boolean } | Array<{ transparent: boolean; alphaTest: number; needsUpdate: boolean }>
-      }
-      const list = Array.isArray(holder.material) ? holder.material : holder.material ? [holder.material] : []
-      for (const material of list) {
-        material.transparent = false
-        material.alphaTest = 0.5
-        material.needsUpdate = true
-      }
-    })
 
     const skinCanvas = viewer.skinCanvas
     let frame = 0
