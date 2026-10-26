@@ -170,7 +170,7 @@ export default function SkinPreview3D() {
       overlay={
         <span
           className={
-            'pointer-events-none absolute left-2 top-2 rounded px-1.5 py-0.5 text-10 transition-colors ' +
+            'pointer-events-none absolute left-2 top-2 rounded px-1.5 py-1 text-10 transition-colors ' +
             (hovered || selectedPart ? 'bg-info-400/15 text-info-200' : 'bg-black/40 text-fg-4')
           }
         >

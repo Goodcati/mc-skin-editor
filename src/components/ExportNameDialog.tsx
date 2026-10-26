@@ -50,7 +50,7 @@ export default function ExportNameDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-4"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-3"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onCancel()
       }}
@@ -68,15 +68,15 @@ export default function ExportNameDialog({
         role="dialog"
         aria-modal="true"
         aria-label="给皮肤命名"
-        className="w-[360px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-4 shadow-2xl"
+        className="w-[360px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-3 shadow-2xl"
       >
-        <header className="flex items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-info-400/15 text-info-300">
+        <header className="flex items-start gap-2">
+          <span className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-info-400/15 text-info-300">
             <Tag size={15} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
             <h2 className="text-13 font-semibold text-fg-1">给皮肤命名</h2>
-            <p className="mt-0.5 text-11 leading-relaxed text-fg-5">
+            <p className="mt-1 text-11 leading-relaxed text-fg-5">
               文件名会带上「绘制- / 合成-」前缀和体型后缀，这里只填名字本身
             </p>
           </div>
@@ -107,7 +107,7 @@ export default function ExportNameDialog({
             spellCheck={false}
             autoComplete="off"
             aria-label="皮肤名称"
-            className="w-full rounded-md border border-wash-9 bg-surface-field px-2.5 py-2 text-13 text-fg-2 placeholder:text-fg-6 outline-none transition-colors focus:border-accent-400/50"
+            className="w-full rounded-md border border-wash-9 bg-surface-field px-2 py-2 text-13 text-fg-2 placeholder:text-fg-6 outline-none transition-colors focus:border-accent-400/50"
           />
           <div className="mt-3 grid grid-cols-2 gap-2">
             <button

@@ -397,7 +397,7 @@ export default function SkinCanvas2D() {
                   onClick={() => setLayer(id)}
                   title={`编辑${LAYER_LABELS[id]}`}
                   className={
-                    'px-2 py-0.5 text-10 transition-colors ' +
+                    'px-2 py-1 text-10 transition-colors ' +
                     (id === layer
                       ? 'bg-accent-400/15 text-accent-300'
                       : 'bg-wash-3 text-fg-5 hover:text-fg-3')

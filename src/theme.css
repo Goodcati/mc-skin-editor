@@ -4,23 +4,28 @@
  * 规矩：**组件里不许再写字面色值/字号/圆角**，一律从这里取。
  * 改配色只改这个文件，不要回头改组件。
  *
- * ── M1 阶段的设计约束（重要，别误读）──
- * 这里的每个 token 值都**逐字等于**改造前组件里直接写的那个值，目的是让
- * 「token 化」这一步产出**零视觉变化**，从而能证明重构没改坏东西。
- * 因此 token 的档位数目前**多于**设计目标（8 个表面 / 7 档文字 / 14 档白膜），
- * 那是因为旧代码里本来就有 8 个几乎一样的黑、7 档灰字。
+ * ── 现在的状态（M2b 之后）──
+ * 档位已经收敛完：表面 8 个名字 → 4 个值（app / panel / chrome / dialog），
+ * 文字 7 个名字 → 4 个值，白膜 14 个名字 → 3 个值（4% / 11% / 20%）。
  *
- * M2 阶段的任务就是把这些档位**收敛**到目标档位（表面 4 / 文字 4 / 边框 3），
- * 那一步只改本文件的值即可，不必再动组件。
+ * **名字多于档位是刻意的**，别急着删：M1 做 token 化时要求逐字等价、零视觉变化，
+ * 于是旧代码里的每个色值都拿到一个独立名字。收敛值之后名字留着，目的是让
+ * 「这次改动到底动了哪些像素」可以逐档回溯。要清理名字可以另开一批，
+ * 那时得连带改组件里的类名（`text-fg-1` 之类），属于纯机械替换，不混在视觉批里做。
  *
  * 色值形态说明：slate/emerald 等直接写成 oklch()，不写 var(--color-slate-400)。
  * 因为 Tailwind v4 对主题变量是按使用情况按需输出的 —— 组件不再直接写 slate-400 之后，
  * var(--color-slate-400) 可能根本不会被输出，引用它就等于引用一个空值。
  * 下面这些 oklch 数值是从改造前的构建产物 dist/assets/*.css 里逐字抄出来的。
+ *
+ * 组件里要用到这些变量吗？可以（例如 index.css 的 body 用 var(--color-fg-1)）。
+ * 上面那条限制只针对**默认调色板**（slate-400 这类），@theme 里自定义的
+ * --color-* 是全部输出到 :root 的，实测产物里 fg-1..7 / surface-* / wash-* 一个不缺。
  */
 @theme {
-  /* ═══════════ 表面（背景）8 档 ═══════════
-     M2 目标：收敛到 4 档 —— app / panel / raised / overlay */
+  /* ═══════════ 表面（背景）8 个名字 / 4 个值 ═══════════
+     档：app(#0b0e13) / panel(#12161f) / chrome(#171d28) / dialog(#1f2735)
+     canvas · field · inset 都并进 app 档 —— 它们在旧代码里本来就是同一个黑。 */
   --color-surface-app: #0b0e13; /* 视图根背景 */
   --color-surface-chrome: #171d28; /* 顶栏 / 状态栏 */
   --color-surface-panel: #12161f; /* 面板、工具栏 */
@@ -30,12 +35,9 @@
   --color-surface-chip: #1f2735; /* 悬浮小按钮 */
   --color-surface-inset: #0b0e13; /* 缩略图 / 空槽底 */
 
-  /* ═══════════ 文字 7 档 ═══════════
-     M2 目标：收敛到 4 档 —— primary / secondary / tertiary / disabled */
-  /* body 的基础文字色。刻意写成 #e2e8f0 而不是 var(--color-fg-2)：
-     fg-2 是 oklch 写法，虽然观感等价，但会让继承色的计算值序列化形式改变，
-     这样「像素/样式零差异」就无法自证了。 */
-  --color-fg-base: #e2e8f0;
+  /* ═══════════ 文字 7 个名字 / 4 个值 ═══════════
+     档：fg-1/2 最亮(93%) / fg-3/4 次要(80%) / fg-5/6 三级(64%) / fg-7 最暗(48%)
+     对比度见 scripts/contrast.mts 的表（10/10 达标）。 */
   --color-fg-1: oklch(93% 0.013 255.508); /* slate-100 最亮 */
   --color-fg-2: oklch(93% 0.013 255.508); /* slate-200 正文 */
   --color-fg-3: oklch(80% 0.025 255); /* slate-300 */
@@ -45,7 +47,11 @@
   --color-fg-7: oklch(48% 0.035 257); /* slate-700 最暗 */
 
   /* ═══════════ 白膜（白色叠加，用于边框/分隔/悬浮层）═══════════
-     数值 = 覆盖在底色上的白色百分比。M2 目标：收敛到 3 档 hairline/normal/strong */
+     14 个名字 / 3 个值，数值 = 覆盖在底色上的白色百分比：
+       wash-2..6  → 4%   hairline（最细的分隔）
+       wash-7..12 → 11%  normal（控件描边）
+       wash-14..45 → 20% strong（需要被看见的边界）
+     合成到面板底色后的实际比值见 contrast.mts 末尾的「边框可见度」段。 */
   --color-wash-2: color-mix(in oklab, #fff 4%, transparent);
   --color-wash-3: color-mix(in oklab, #fff 4%, transparent);
   --color-wash-4: color-mix(in oklab, #fff 4%, transparent);
@@ -79,10 +85,10 @@
   /* 另类标记（合成页源 B 的区分色） */
   --color-alt-500: oklch(71.5% 0.143 215.221);
 
-  /* ═══════════ 字号 7 档 ═══════════
-     M2 目标：收敛到 6 档 —— 10 / 11 / 12 / 13 / 15 / 18（9 归入 10）
-     只设 font-size，不设 --text-*--line-height，保持与旧写法 text-[Npx] 行为一致 */
-  --text-9: 9px;
+  /* ═══════════ 字号 6 档 ═══════════
+     10 / 11 / 12 / 13 / 15 / 18，旧的 9px 已并入 10。
+     只设 font-size，不设 --text-*--line-height —— 旧写法 text-[Npx] 不带行高，
+     设了行高会改变所有文本块的高度，属于布局变化，不在这批范围内。 */
   --text-10: 10px;
   --text-11: 11px;
   --text-12: 12px;
@@ -90,14 +96,31 @@
   --text-15: 15px;
   --text-18: 18px;
 
-  /* ═══════════ 圆角 3 档（M2 启用）═══════════ */
-  --radius-control: 4px; /* 按钮、输入框、小卡 */
-  --radius-card: 8px; /* 卡片、面板 */
-  --radius-overlay: 12px; /* 弹框 */
+  /* ═══════════ 圆角 3 档 ═══════════
+     做法是**覆盖 Tailwind 自带的数值档**，而不是新造一套名字 ——
+     这样组件里一个类都不用改（Lobby 也不用），值自动收敛。
+     可用集合（多写一档会被 scripts/scan-style.mts 卡住）：
+       rounded · rounded-sm    → 4px   控件：按钮 / 输入框 / 小片
+       rounded-md · rounded-lg → 8px   卡片 / 面板
+       rounded-xl              → 12px  弹框 / 浮层
+       rounded-full            → 胶囊
+     ⚠️ `.rounded`（不带后缀）在 v4 产物里是硬编码 `.25rem`，走不了 token；
+        它正好等于 4px，所以留在「控件」档不冲突。
+     合并说明：md 从 6px 提到 8px，与 lg 并成一档 —— 6px 和 8px 的差别肉眼难辨，
+     留着只是让类名随机分布。 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 
-  /* ═══════════ 间距 4 档（M2 启用）═══════════ */
-  --spacing-tight: 4px;
-  --spacing-normal: 8px;
-  --spacing-loose: 12px;
-  --spacing-section: 16px;
+  /* ═══════════ 间距 4 档 ═══════════
+     只允许这 4 个步长（Tailwind 数字步长即 px 的 1/4）：
+       *-1   → 4px    紧贴
+       *-1.5 → 6px    控件内部
+       *-2   → 8px    常规间隔
+       *-3   → 12px   分区
+     越界的一律归到最近的档：0.5→1、2.5→2、4→3。
+     ⚠️ v4 的间距是 calc(var(--spacing) * N)，没法像圆角那样靠覆盖 token 收敛，
+        只能改类名 —— 所以这里是**约定**，由 scripts/scan-style.mts 负责卡。
+        已知未迁：Lobby.tsx 里 17 处越界步长（那个文件归机主）。 */
 }

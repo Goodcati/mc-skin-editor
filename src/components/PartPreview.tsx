@@ -444,7 +444,7 @@ export default function PartPreview() {
                   : '先点左侧模型选一个部位'
               }
               className={
-                'rounded border px-2 py-0.5 text-11 transition-colors ' +
+                'rounded border px-2 py-1 text-11 transition-colors ' +
                 (!selectedPart
                   ? 'cursor-not-allowed border-wash-5 bg-wash-2 text-fg-7'
                   : id === face

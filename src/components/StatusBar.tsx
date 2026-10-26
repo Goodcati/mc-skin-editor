@@ -16,7 +16,7 @@ export default function StatusBar() {
   const { tool, color, cursor, status, doc, selectedPart, setSelectedPart, flash } = useEditor()
 
   return (
-    <footer className="flex h-7 shrink-0 items-center gap-4 border-t border-wash-10 bg-surface-chrome px-4 text-11 text-fg-5">
+    <footer className="flex h-7 shrink-0 items-center gap-3 border-t border-wash-10 bg-surface-chrome px-3 text-11 text-fg-5">
       <span className="flex items-center gap-1.5">
         <span className="h-1.5 w-1.5 rounded-full bg-info-400" />
         {TOOL_LABEL[tool] ?? tool}
@@ -44,7 +44,7 @@ export default function StatusBar() {
             flash('已取消选择')
           }}
           title="取消选中（Esc）"
-          className="flex items-center gap-1.5 rounded bg-info-400/12 px-2 py-0.5 text-info-300 transition-colors hover:bg-info-400/20"
+          className="flex items-center gap-1.5 rounded bg-info-400/12 px-2 py-1 text-info-300 transition-colors hover:bg-info-400/20"
         >
           选中：{BODY_KEY_LABELS[selectedPart]}
           <span className="text-info-400/70">✕</span>
@@ -54,7 +54,7 @@ export default function StatusBar() {
       )}
 
       {status && (
-        <span className="ml-auto shrink-0 rounded bg-accent-400/10 px-2 py-0.5 text-accent-300">
+        <span className="ml-auto shrink-0 rounded bg-accent-400/10 px-2 py-1 text-accent-300">
           {status}
         </span>
       )}

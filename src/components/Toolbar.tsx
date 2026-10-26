@@ -59,7 +59,7 @@ function Chip({
         'flex items-center justify-center gap-1 rounded-md border px-1.5 py-1.5 text-11 transition-colors ' +
         (active
           ? 'border-accent-400/40 bg-accent-400/12 text-accent-300'
-          : 'border-wash-7 bg-wash-3 text-fg-4 enabled:hover:border-wash-15 enabled:hover:bg-wash-7 enabled:hover:text-fg-2 disabled:cursor-not-allowed disabled:opacity-40')
+          : 'border-wash-7 bg-wash-3 text-fg-4 enabled:hover:border-wash-15 enabled:hover:bg-wash-7 enabled:hover:text-fg-2')
       }
     >
       <Icon size={13} strokeWidth={2} />
@@ -96,7 +96,7 @@ function RecentRail({
             : `最近使用 ${count}/${MAX_RECENT_COLORS}：自上而下由新到旧，点一下即切换为这支颜色`
         }
       >
-        <span className="text-9 font-medium tracking-wide text-fg-6">最近</span>
+        <span className="text-10 font-medium tracking-wide text-fg-6">最近</span>
       </div>
 
       <div className="thin-scroll flex min-h-0 flex-1 flex-col items-center gap-[3px] overflow-y-auto py-2">
@@ -204,7 +204,7 @@ export default function Toolbar() {
             <div className="grid grid-cols-2 gap-1.5">
               <SkinImportButton
                 title="导入皮肤 PNG（64×64 或旧版 64×32）"
-                className="flex items-center justify-center gap-1 rounded-md border border-wash-7 bg-wash-3 px-1.5 py-1.5 text-11 text-fg-4 transition-colors enabled:hover:border-wash-15 enabled:hover:bg-wash-7 enabled:hover:text-fg-2 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex items-center justify-center gap-1 rounded-md border border-wash-7 bg-wash-3 px-1.5 py-1.5 text-11 text-fg-4 transition-colors enabled:hover:border-wash-15 enabled:hover:bg-wash-7 enabled:hover:text-fg-2"
               >
                 <Upload size={13} strokeWidth={2} />
                 <span className="truncate">导入</span>

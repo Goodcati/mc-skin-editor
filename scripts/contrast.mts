@@ -73,9 +73,9 @@ function parseColor(raw: string): RGBA | null {
   return null
 }
 
-/** 半透明白按 alpha 叠加到不透明底色上 */
-function over(fg: RGBA, bg: RGB): RGB {
-  const a = fg.alpha ?? 1
+/** 半透明白（或指定透明度）按 alpha 叠加到不透明底色上 */
+function over(fg: RGBA, bg: RGB, alphaOverride?: number): RGB {
+  const a = alphaOverride ?? fg.alpha ?? 1
   return { r: fg.r * a + bg.r * (1 - a), g: fg.g * a + bg.g * (1 - a), b: fg.b * a + bg.b * (1 - a) }
 }
 
@@ -107,8 +107,23 @@ function parseTokens(css: string): Record<string, string> {
 }
 
 const afterTokens = parseTokens(readFileSync(cssPath, 'utf8'))
-const beforeCss = execFileSync('git', ['show', `${rev}:src/theme.css`], { encoding: 'utf8' })
-const beforeTokens = parseTokens(beforeCss)
+
+/**
+ * 「改前」列的来源是 git。CI 里常是浅克隆、或者这个文件本来就没改过，
+ * 取不到时**不当作失败**，降级成「只校验改后」—— 门禁的职责是拦住坏配色，
+ * 不是拦住「没有历史」。降级时会打印一行醒目的说明，避免有人以为是全绿。
+ */
+let beforeCss: string | null = null
+try {
+  beforeCss = execFileSync('git', ['show', `${rev}:src/theme.css`], {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
+  })
+} catch {
+  beforeCss = null
+}
+const degraded = beforeCss === null
+const beforeTokens = beforeCss ? parseTokens(beforeCss) : afterTokens
 
 const color = (tokens: Record<string, string>, name: string): RGBA => {
   const raw = tokens[name]
@@ -120,13 +135,21 @@ const color = (tokens: Record<string, string>, name: string): RGBA => {
 
 // ---------- 核对表 ----------
 // 每一行：用途 / 前景 token / 背景 token / 阈值（正文 4.5，次要 3，禁用 2.5）
-const ROWS: { use: string; fg: string; fgBefore: string; bg: string; min: number }[] = [
+// opacity：可选。禁用态在 index.css 里是 `opacity: 0.55`，
+// 真实观感 = 文字色按 55% 合成到底色上，所以这一行必须按合成后算，
+// 否则表上是 14.74、屏幕上是 5.19，等于自欺。
+type Row = { use: string; fg: string; fgBefore: string; bg: string; min: number; opacity?: number }
+
+const ROWS: Row[] = [
   { use: '正文 · 面板上', fg: 'fg-2', fgBefore: 'fg-2', bg: 'surface-panel', min: 4.5 },
   { use: '正文 · 页面底', fg: 'fg-2', fgBefore: 'fg-2', bg: 'surface-app', min: 4.5 },
   { use: '次要 · 面板上', fg: 'fg-4', fgBefore: 'fg-4', bg: 'surface-panel', min: 3 },
   { use: '三级 · 面板上', fg: 'fg-6', fgBefore: 'fg-6', bg: 'surface-panel', min: 3 },
   { use: '三级 · 弹框上', fg: 'fg-6', fgBefore: 'fg-6', bg: 'surface-dialog', min: 3 },
-  { use: '禁用 · 面板上', fg: 'fg-7', fgBefore: 'fg-7', bg: 'surface-panel', min: 2.5 },
+  { use: '最暗提示 · 面板上', fg: 'fg-7', fgBefore: 'fg-7', bg: 'surface-panel', min: 2.5 },
+  // 禁用按钮：WCAG 1.4.3 对「不可用控件」是豁免的，所以这条不求 4.5，
+  // 只求「还看得清是什么字」，阈值取 2.5（与最暗提示同一档）。
+  { use: '禁用按钮 · 面板上', fg: 'fg-2', fgBefore: 'fg-2', bg: 'surface-panel', min: 2.5, opacity: 0.55 },
   { use: '强调字 · 面板上', fg: 'accent-300', fgBefore: 'accent-300', bg: 'surface-panel', min: 4.5 },
   { use: '危险字 · 面板上', fg: 'danger-300', fgBefore: 'danger-300', bg: 'surface-panel', min: 4.5 },
   { use: '提醒字 · 面板上', fg: 'warn-300', fgBefore: 'warn-300', bg: 'surface-panel', min: 4.5 },
@@ -137,23 +160,35 @@ const pad = (s: string, n: number) => s + ' '.repeat(Math.max(0, n - [...s].redu
 const fmt = (x: number) => x.toFixed(2)
 
 console.log(`\n改前 = ${rev} 的 src/theme.css   ·   改后 = 工作区 src/theme.css\n`)
+if (degraded) {
+  console.log(`⚠️  读不到 ${rev}:src/theme.css（浅克隆 / 无 git / 文件新增），已降级为「只校验改后」。\n`)
+}
 console.log(`${pad('用途', 20)}${pad('前景', 12)}${pad('背景', 16)}${pad('改前', 8)}${pad('改后', 8)}${pad('阈值', 6)}判定`)
 console.log('-'.repeat(86))
 
 let passBefore = 0
 let passAfter = 0
 for (const row of ROWS) {
-  const fgA = color(afterTokens, row.fg)
-  const fgB = color(beforeTokens, row.fgBefore)
+  const fgA0 = color(afterTokens, row.fg)
+  const fgB0 = color(beforeTokens, row.fgBefore)
   const bgA = color(afterTokens, row.bg)
   const bgB = color(beforeTokens, row.bg)
-  const rB = contrast(fgB, bgB)
+  // 改后若要叠透明度（禁用态），先合成到底色再算；改前不叠 —— 那时候禁用态根本
+  // 没有样式，看起来和可点的一模一样，这正是本批要修的东西。
+  const fgA = row.opacity === undefined ? fgA0 : over(fgA0, bgA, row.opacity)
+  const rB = contrast(fgB0, bgB)
   const rA = contrast(fgA, bgA)
   const okB = rB >= row.min
   const okA = rA >= row.min
   if (okB) passBefore++
   if (okA) passAfter++
-  const verdict = okA ? (okB ? '达标（原已达）' : `达标 ↑ 从 ${fmt(rB)} 提到 ${fmt(rA)}`) : '**未达标**'
+  const verdict = !okA
+    ? '**未达标**'
+    : row.opacity === undefined
+      ? okB
+        ? '达标（原已达）'
+        : `达标 ↑ 从 ${fmt(rB)} 提到 ${fmt(rA)}`
+      : `达标（含 ${Math.round(row.opacity * 100)}% 透明度合成）`
   console.log(
     `${pad(row.use, 20)}${pad(row.fg, 12)}${pad(row.bg.replace('surface-', ''), 16)}${pad(fmt(rB), 8)}${pad(fmt(rA), 8)}${pad(String(row.min), 6)}${verdict}`,
   )

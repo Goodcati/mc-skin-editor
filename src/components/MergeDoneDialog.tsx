@@ -42,7 +42,7 @@ export default function MergeDoneDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-4"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-3"
       /* 用 mousedown 且要求落点就是遮罩本身：不然在卡片里按下滑到外面也会被当成"点了遮罩" */
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose()
@@ -52,15 +52,15 @@ export default function MergeDoneDialog({
         role="dialog"
         aria-modal="true"
         aria-label="合成完成"
-        className="w-[392px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-4 shadow-2xl"
+        className="w-[392px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-3 shadow-2xl"
       >
-        <header className="flex items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-400/15 text-accent-300">
+        <header className="flex items-start gap-2">
+          <span className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-400/15 text-accent-300">
             <CircleCheck size={16} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
             <h2 className="text-13 font-semibold text-fg-1">合成完成</h2>
-            <p className="mt-0.5 text-11 leading-relaxed text-fg-5">
+            <p className="mt-1 text-11 leading-relaxed text-fg-5">
               文件已交给浏览器下载，名字带「合成-」前缀，和绘制作品分得开。
             </p>
           </div>
@@ -75,7 +75,7 @@ export default function MergeDoneDialog({
           </button>
         </header>
 
-        <dl className="mt-3 space-y-1 rounded-lg border border-wash-7 bg-wash-2 px-2.5 py-2 text-11">
+        <dl className="mt-3 space-y-1 rounded-lg border border-wash-7 bg-wash-2 px-2 py-2 text-11">
           <div className="flex gap-2">
             <dt className="w-12 shrink-0 text-fg-6">文件名</dt>
             <dd className="min-w-0 flex-1 truncate font-mono text-fg-3" title={info.filename}>
@@ -105,7 +105,7 @@ export default function MergeDoneDialog({
         */}
         {holes > 0 && (
           <p className="mt-2 flex items-start gap-1.5 rounded border border-danger-400/25 bg-danger-400/[0.07] px-2 py-1.5 text-10 leading-relaxed text-danger-300">
-            <TriangleAlert size={11} strokeWidth={2} className="mt-0.5 shrink-0" />
+            <TriangleAlert size={11} strokeWidth={2} className="mt-1 shrink-0" />
             第一层有 {holes} 个透明像素，进游戏会显示成黑色。建议换一张源图再合一次
           </p>
         )}

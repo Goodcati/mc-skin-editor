@@ -11,9 +11,95 @@ body {
   margin: 0;
   overflow: hidden;
   background-color: var(--color-surface-app);
-  color: var(--color-fg-base);
+  color: var(--color-fg-1);
   font-family: ui-sans-serif, system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   交互四态（统一收口处）
+
+   组件里**不要再写** hover: / active: / focus-visible: / disabled: 变体。
+   全部由下面的元素选择器接管，理由有两个：
+     1. 全站 37 个 button + 5 个 input 零散加变体，风格必然走形；
+     2. 四态是「一套视觉语言」，写在 token 旁边才能一眼看出是否统一。
+
+   三条硬约束（改这里之前先读）：
+     ① focus-visible 只用 outline + outline-offset，**不加 border 宽度、不加尺寸**，
+        所以不可能产生布局位移。
+     ② disabled 不能只靠「变淡」表达——主操作按钮（绿底）淡下去仍然像可点。
+        所以额外去饱和：绿色变灰，一眼就知道点不了。
+     ③ hover / active 用 filter 而非改背景色。因为按钮底色来自各处的 wash/bg 类，
+        逐个改底色等于把 UI 改回散装状态。
+
+   禁用透明度取 0.55 是有据的（scripts/contrast.mts 会算）：
+     正文色文字 14.74 → 5.19，仍远高于 4.5；三级色 5.39 → 2.50，恰在可辨下限。
+     再低（0.45）正文色掉到 3.89，就属于「看不清」而不是「点不了」了。
+   ═══════════════════════════════════════════════════════════════════ */
+@layer base {
+  button,
+  [role='button'],
+  a[href],
+  input,
+  select,
+  textarea {
+    transition:
+      filter 120ms ease,
+      box-shadow 120ms ease,
+      opacity 120ms ease;
+  }
+
+  /* ── 悬停：整体提亮 + 1px 内描边 ── */
+  button:hover:not(:disabled):not([aria-disabled='true']),
+  [role='button']:hover:not([aria-disabled='true']),
+  a[href]:hover,
+  input:hover:not(:disabled),
+  select:hover:not(:disabled),
+  textarea:hover:not(:disabled) {
+    filter: brightness(1.18);
+    box-shadow: inset 0 0 0 1px var(--color-wash-20);
+  }
+
+  /* ── 按下：压暗 + 内阴影，做出「陷进去」的手感 ── */
+  button:active:not(:disabled):not([aria-disabled='true']),
+  [role='button']:active:not([aria-disabled='true']),
+  a[href]:active,
+  input:active:not(:disabled),
+  select:active:not(:disabled),
+  textarea:active:not(:disabled) {
+    filter: brightness(0.9);
+    box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.5);
+  }
+
+  /* ── 键盘焦点：外描边 + 偏移，零位移 ── */
+  button:focus-visible,
+  [role='button']:focus-visible,
+  a[href]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-accent-400);
+    outline-offset: 2px;
+  }
+
+  /* ── 禁用：变淡 + 去饱和 + 禁止光标 ── */
+  button:disabled,
+  [role='button'][aria-disabled='true'],
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    opacity: 0.55;
+    filter: saturate(0.1);
+    cursor: not-allowed;
+  }
+}
+
+@layer utilities {
+  /* 遗留别名：Lobby 还有一个 text-9 没迁（那个文件归机主，暂不碰）。
+     这里映射到 10px，保证字号收敛后它不会因为 token 被删而失去字号。 */
+  .text-9 {
+    font-size: var(--text-10);
+  }
 }
 
 /* 细滚动条，避免工具栏/画布出现系统默认宽滚动条 */
@@ -23,7 +109,7 @@ body {
 }
 .thin-scroll::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.22);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 .thin-scroll::-webkit-scrollbar-track {
   background: transparent;

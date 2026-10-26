@@ -11,10 +11,11 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "gen:samples": "tsx scripts/make-sample-skins.mts",
-    "verify": "npm run verify:export && npm run verify:head && npm run verify:works",
+    "verify": "npm run verify:export && npm run verify:head && npm run verify:works && npm run verify:style && npm run verify:contrast",
     "verify:export": "tsx scripts/verify-export.mts",
     "verify:head": "tsx scripts/verify-head.mts",
     "verify:works": "tsx scripts/verify-works.mts",
+    "verify:style": "tsx scripts/scan-style.mts",
     "verify:contrast": "tsx scripts/contrast.mts"
   },
   "dependencies": {

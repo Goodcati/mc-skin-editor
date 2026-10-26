@@ -20,5 +20,11 @@ jobs:
       - name: 构建（tsc -b && vite build）
         run: npm run build
 
-      - name: 验证（导出闭环 / 等距头部 / 作品库备份）
+      - name: 验证（导出闭环 / 等距头部 / 作品库备份 / 样式纪律 / 对比度）
         run: npm run verify
+
+      # 上面那条已经包含 verify:contrast，这里再单跑一次是为了让 WCAG 表
+      # 在 CI 日志里独立成段 —— 塞在聚合输出里根本看不见，等于没有门禁。
+      # 代价 0.2s，换来「一眼能看到 11/11」。
+      - name: 对比度门禁（WCAG 2.1，逐行改前 / 改后）
+        run: npm run verify:contrast

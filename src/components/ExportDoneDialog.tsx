@@ -28,7 +28,7 @@ export default function ExportDoneDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-4"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-3"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
@@ -37,15 +37,15 @@ export default function ExportDoneDialog({
         role="dialog"
         aria-modal="true"
         aria-label="导出完成"
-        className="w-[360px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-4 shadow-2xl"
+        className="w-[360px] max-w-full rounded-xl border border-wash-10 bg-surface-dialog p-3 shadow-2xl"
       >
-        <header className="flex items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-400/15 text-accent-300">
+        <header className="flex items-start gap-2">
+          <span className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-400/15 text-accent-300">
             <CircleCheck size={16} strokeWidth={2} />
           </span>
           <div className="min-w-0 flex-1">
             <h2 className="text-13 font-semibold text-fg-1">导出完成</h2>
-            <p className="mt-0.5 text-11 leading-relaxed text-fg-5">
+            <p className="mt-1 text-11 leading-relaxed text-fg-5">
               文件已交给浏览器下载，上传时照文件名选体型
             </p>
           </div>
@@ -60,7 +60,7 @@ export default function ExportDoneDialog({
           </button>
         </header>
 
-        <dl className="mt-3 space-y-1 rounded-lg border border-wash-7 bg-wash-2 px-2.5 py-2 text-11">
+        <dl className="mt-3 space-y-1 rounded-lg border border-wash-7 bg-wash-2 px-2 py-2 text-11">
           <div className="flex gap-2">
             <dt className="w-12 shrink-0 text-fg-6">文件名</dt>
             <dd className="min-w-0 flex-1 truncate font-mono text-fg-3" title={info.filename}>

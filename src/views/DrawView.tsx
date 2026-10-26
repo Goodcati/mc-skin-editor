@@ -85,7 +85,7 @@ export default function DrawView() {
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-surface-app text-fg-2">
       {/* 顶栏 */}
-      <header className="flex h-11 shrink-0 items-center justify-between border-b border-wash-10 bg-surface-chrome px-4">
+      <header className="flex h-11 shrink-0 items-center justify-between border-b border-wash-10 bg-surface-chrome px-3">
         <div className="flex items-center gap-2">
           {/* 回大厅。不做成隐藏手势：进来之后没有回头路，只能手改地址栏 */}
           <a
@@ -101,7 +101,7 @@ export default function DrawView() {
           </span>
           <h1 className="text-13 font-semibold tracking-wide">Minecraft 皮肤编辑器</h1>
           <span
-            className="rounded bg-wash-6 px-1.5 py-0.5 font-mono text-10 text-fg-4"
+            className="rounded bg-wash-6 px-1.5 py-1 font-mono text-10 text-fg-4"
             title="版本号：主版本.迭代.补丁"
           >
             {APP_VERSION}
@@ -137,7 +137,7 @@ export default function DrawView() {
                 onClick={() => setModelType(kind)}
                 title={`${MODEL_HINTS[kind]}。${MODEL_NOTE}；上传时请在官网 / 启动器选同一项`}
                 className={
-                  'px-2 py-0.5 transition-colors ' +
+                  'px-2 py-1 transition-colors ' +
                   (modelType === kind
                     ? 'bg-accent-400/15 text-accent-300'
                     : 'bg-wash-3 text-fg-5 hover:text-fg-3')
