@@ -75,3 +75,24 @@ K1 改的是**对象实例的创建方式**，不是逻辑。这种改动的危�
 
 `scripts/scan-style.mts` 的白名单已清空。以后要加豁免，必须同时写清**原因**和
 **到期条件**（什么情况下这条豁免该删掉），不接受只写「暂时跳过」。
+
+## 五、结构性冗余（不计入 lint 条数）
+
+| 编号 | 位置 | 重复的是什么 | 量化 | 判定 | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| K7 | `ExportNameDialog.tsx`<br>`ExportDoneDialog.tsx`<br>`MergeDoneDialog.tsx` | 三份一模一样的弹窗骨架：① 遮罩层 `fixed inset-0 z-50 grid place-items-center bg-black/65 p-3` + 「落点是遮罩才关」的 mousedown 判断；② 内层 `role="dialog" aria-modal="true" rounded-xl border border-wash-10 bg-surface-dialog p-3 shadow-2xl`；③ 头部「圆形图标徽章 + `text-13` 标题 + `text-11` 说明」 | 每份约 40 行，合计约 120 行；抽公共 `Dialog` 后约 55 行 | HARDENING（纯结构，不改行为） | ⏳ 未动 |
+
+**为什么这次不动**：三处看着像，其实各有不能直接合并的差异 —— 宽度不同（360 / 360 / 392）、
+图标徽章色分属 `info` 与 `accent` 两个色系（`bg-info-400/15` / `bg-accent-400/15`）、关闭语义不同（命名框是「取消」，
+完成提示是「关掉，结果保留」）、`ExportNameDialog` 还多一段「除 Escape 外
+`stopPropagation`」的特殊处理（挡住底下画布的 Ctrl+Z）。合并要先抽象出这些参数，
+再逐屏比对才敢说零视觉变化，成本高于本批「清理冗余」的范围。
+
+**到期条件（满足任一条就做）**：
+1. 要新增第 4 个弹窗 —— 到时候不抽就是抄第四遍，边际成本反过来了；
+2. 要统一弹窗的焦点陷阱（Tab 困在框内、关闭后焦点归位）—— 抽公共组件的那一刻正是加
+   `role` 语义和焦点管理的时机，顺手做比单独做便宜。
+
+做的时候判据不能只看 `npm run build`：改的是渲染结构，至少要比对三个弹窗的
+几何尺寸（宽高、居中位置）和头部各元素的 `font-size` / `color` 计算值。
+
