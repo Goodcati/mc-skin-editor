@@ -58,7 +58,7 @@ npm run verify
 
 ## 离线版（不需要联网）
 
-大厅底部「我的皮肤」一行右侧有 **下载离线版** 按钮；也可以直接下载：
+大厅右上角工具栏里有 **下载离线版** 按钮；也可以直接下载：
 https://goodcati.github.io/mc-skin-editor/download/mse-offline.zip
 
 解压后双击 index.html 即可使用（纯前端，数据只存在你自己的浏览器里）。
